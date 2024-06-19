@@ -57,6 +57,7 @@ pub mod hash_convert {
         let mut keys = Vec::new();
 
         for upper_char in upper_chars {
+            // iterate through values until we find a matching one, pass key (saves editing 2 different hashes)
             let uhhh = CHAR_HASH.iter().find_map(|(key, &val)|
             if val == upper_char {
                 Some(key)
