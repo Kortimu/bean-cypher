@@ -3,9 +3,11 @@ use std::io;
 #[path = "decode.rs"] mod decode;
 
 fn main() {
+    let version = env!("CARGO_PKG_VERSION");
+
     println!("");
     println!("=======================================");
-    println!("Bean Cypher Alpha v0.1.0 - Coming Soon™");
+    println!("Bean Cypher Alpha v{} - Coming Soon™", version);
     println!("=======================================");
     println!("type e => encode sentence");
     println!("type d => decode sentence");
