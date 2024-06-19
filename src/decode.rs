@@ -1,4 +1,4 @@
-use crate::again;
+use crate::{again, utils::hash_convert::print_from_id};
 use std::{collections::HashMap, io};
 
 pub fn run() {
@@ -19,55 +19,11 @@ pub fn run() {
     // compares this program's version to the version the text was encoded in
     check_version(text_major, text_minor);
 
-    let char_hash = HashMap::from([
-        (0, ' '),
-        (1, 'A'),
-        (2, 'Ā'),
-        (3, 'B'),
-        (4, 'C'),
-        (5, 'Č'),
-        (6, 'D'),
-        (7, 'E'),
-        (8, 'Ē'),
-        (9, 'F'),
-        (10, 'G'),
-        (11, 'Ģ'),
-        (12, 'H'),
-        (13, 'I'),
-        (14, 'Ī'),
-        (15, 'J'),
-        (16, 'K'),
-        (17, 'Ķ'),
-        (18, 'L'),
-        (19, 'Ļ'),
-        (20, 'M'),
-        (21, 'N'),
-        (22, 'Ņ'),
-        (23, 'O'),
-        (24, 'P'),
-        (25, 'Q'),
-        (26, 'R'),
-        (27, 'S'),
-        (28, 'Š'),
-        (29, 'T'),
-        (30, 'U'),
-        (31, 'Ū'),
-        (32, 'V'),
-        (33, 'W'),
-        (34, 'X'),
-        (35, 'Y'),
-        (36, 'Z'),
-        (37, 'Ž')
-    ]);
-
     for bean in beans {
         let id = decode_beans(bean);
 
         // convert each id to what it means
-        match char_hash.get(&id) {
-            Some(result) => print!("{}", result),
-            None => ()
-        }
+        print_from_id(id);
     }   
 
     again();

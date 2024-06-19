@@ -1,51 +1,10 @@
-use crate::again;
+use crate::{again, utils::hash_convert::char_to_id};
 use std::{collections::HashMap, io};
 
 pub fn run() {
     println!("---------------------------------------");
     println!("we encodin baby! type yer sentence :3");
     println!("---------------------------------------");
-    
-    let char_hash = HashMap::from([
-        (' ', 0),
-        ('A', 1),
-        ('Ā', 2),
-        ('B', 3),
-        ('C', 4),
-        ('Č', 5),
-        ('D', 6),
-        ('E', 7),
-        ('Ē', 8),
-        ('F', 9),
-        ('G', 10),
-        ('Ģ', 11),
-        ('H', 12),
-        ('I', 13),
-        ('Ī', 14),
-        ('J', 15),
-        ('K', 16),
-        ('Ķ', 17),
-        ('L', 18),
-        ('Ļ', 19),
-        ('M', 20),
-        ('N', 21),
-        ('Ņ', 22),
-        ('O', 23),
-        ('P', 24),
-        ('Q', 25),
-        ('R', 26),
-        ('S', 27),
-        ('Š', 28),
-        ('T', 29),
-        ('U', 30),
-        ('Ū', 31),
-        ('V', 32),
-        ('W', 33),
-        ('X', 34),
-        ('Y', 35),
-        ('Z', 36),
-        ('Ž', 37)
-    ]);
 
     let mut text = String::new();
     io::stdin().read_line(&mut text).expect("god damn it");
@@ -54,25 +13,17 @@ pub fn run() {
 
     // convert each character to an id
     for char in text.chars() {
-        // converting a char to uppercase, it can become 2 chars with some unicode chars (e.g. ﬁ => ['F', 'I']). i love standards
-        let upper_chars = char.to_uppercase().collect::<Vec<_>>();
-
-        for upper_char in upper_chars {
-            match char_hash.get(&upper_char) {
-                Some(id) => ids.push(id),
-                None => (),
-            }
-        }
+        ids.append(&mut char_to_id(char));
     }
 
     // print first two "beans" to mark the major and minor version of the program this was encoded in
-    // this only breaks when either major or minor is > 215. surely this won't go that far?
+    // this only breaks when either major or minor is > 215. surely this shitpost won't go that far?
     let version_major = env!("CARGO_PKG_VERSION_MAJOR").parse::<i32>().unwrap();
     let version_minor = env!("CARGO_PKG_VERSION_MINOR").parse::<i32>().unwrap();
 
-    ids.insert(0, &version_major);
-    ids.insert(1, &version_minor);
-    
+    ids.insert(0, version_major);
+    ids.insert(1, version_minor);
+
     println!("---------------------------------------");
 
     // convert each id to its corresponding "beans"

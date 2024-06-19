@@ -1,6 +1,9 @@
 use std::io;
+mod utils;
 #[path = "encode.rs"] mod encode;
 #[path = "decode.rs"] mod decode;
+#[macro_use]
+extern crate lazy_static;
 
 fn main() {
     let version = env!("CARGO_PKG_VERSION");
