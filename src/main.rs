@@ -19,7 +19,13 @@ fn main() {
         "e" => encode::run(),
         "d" => decode::run(),
         "q" => std::process::exit(0),
-        _ => println!("dude you had 1 job")
+        _ => {
+            println!("");
+            println!("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            println!("Wrong command. Just type in a single letter in the command prompt.");
+            println!("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            main();
+        }
     }
 }
 
