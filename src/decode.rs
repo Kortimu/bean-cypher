@@ -10,8 +10,14 @@ pub fn run() {
     io::stdin().read_line(&mut text).expect("god damn it");
 
     println!("---------------------------------------");
+    
+    let mut beans = text.split(' ');
 
-    let beans = text.split(' ');
+    let text_major = decode_beans(beans.next().unwrap());
+    let text_minor = decode_beans(beans.next().unwrap());
+
+    // compares this program's version to the version the text was encoded in
+    check_version(text_major, text_minor);
 
     let char_hash = HashMap::from([
         (0, ' '),
@@ -65,6 +71,22 @@ pub fn run() {
     }   
 
     again();
+}
+
+fn check_version(text_major: i32, text_minor: i32) {
+    let program_major = env!("CARGO_PKG_VERSION_MAJOR").parse::<i32>().unwrap();
+    let program_minor = env!("CARGO_PKG_VERSION_MINOR").parse::<i32>().unwrap();
+
+    if program_major != text_major || program_minor != text_minor {
+        println!("");
+        println!("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        println!("The text was encoded in a different version of the program. It may get decoded wrongly.");
+        println!("- - - - - - - - - - - - - - - - - - - -");
+        println!("Text was encoded in v{}.{}.x", text_major, text_minor);
+        println!("Text is decoded in v{}.{}.x", program_major, program_minor);
+        println!("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        println!("");
+    }
 }
 
 fn decode_beans (bean: &str) -> i32 {

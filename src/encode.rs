@@ -65,6 +65,14 @@ pub fn run() {
         }
     }
 
+    // print first two "beans" to mark the major and minor version of the program this was encoded in
+    // this only breaks when either major or minor is > 215. surely this won't go that far?
+    let version_major = env!("CARGO_PKG_VERSION_MAJOR").parse::<i32>().unwrap();
+    let version_minor = env!("CARGO_PKG_VERSION_MINOR").parse::<i32>().unwrap();
+
+    ids.insert(0, &version_major);
+    ids.insert(1, &version_minor);
+    
     println!("---------------------------------------");
 
     // convert each id to its corresponding "beans"
