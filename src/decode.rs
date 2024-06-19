@@ -54,10 +54,24 @@ pub fn run() {
         (37, 'Ž')
     ]);
 
+    for bean in beans {
+        let id = decode_beans(bean);
+
+        // convert each id to what it means
+        match char_hash.get(&id) {
+            Some(result) => print!("{}", result),
+            None => ()
+        }
+    }   
+
+    again();
+}
+
+fn decode_beans (bean: &str) -> i32 {
     let b_hash = HashMap::from([
-       ("b", 0),
-       ("B", 72),
-       ("6", 144),
+        ("b", 0),
+        ("B", 72),
+        ("6", 144),
     ]);
     let e_hash = HashMap::from([
         ("e", 0),
@@ -80,65 +94,57 @@ pub fn run() {
         ("", 3),
     ]);
 
-    for bean in beans {
-        let mut id = 0;
+    let mut id = 0;
 
-        let mut chars = bean.chars();
-        let mut current_char;
+    let mut chars = bean.chars();
+    let mut current_char;
 
-        // yoink first character, convert to string. do this 5 times. is there a better way? probably but i am learning so any sins can be forgiven
-        match chars.next() {
-            Some(result) => current_char = result.to_string(),
-            None => current_char = "".to_string()
-        }
-        match b_hash.get(&current_char.as_str()) {
-            Some(result) => id = id + result,
-            None => ()
-        }
+    // yoink first character, convert to string, check against hash and add to id. do this 5 times. is there a better way? probably but i am learning so any sins and felonies can be forgiven
+    match chars.next() {
+        Some(result) => current_char = result.to_string(),
+        None => current_char = "".to_string()
+    }
+    match b_hash.get(&current_char.as_str()) {
+        Some(result) => id = id + result,
+        None => ()
+    }
 
-        match chars.next() {
-            Some(result) => current_char = result.to_string(),
-            None => current_char = "".to_string()
-        }
-        match e_hash.get(&current_char.as_str()) {
-            Some(result) => id = id + result,
-            None => ()
-        }
+    match chars.next() {
+        Some(result) => current_char = result.to_string(),
+        None => current_char = "".to_string()
+    }
+    match e_hash.get(&current_char.as_str()) {
+        Some(result) => id = id + result,
+        None => ()
+    }
 
-        match chars.next() {
-            Some(result) => current_char = result.to_string(),
-            None => current_char = "".to_string()
-        }
-        match a_hash.get(&current_char.as_str()) {
-            Some(result) => id = id + result,
-            None => ()
-        }
+    match chars.next() {
+        Some(result) => current_char = result.to_string(),
+        None => current_char = "".to_string()
+    }
+    match a_hash.get(&current_char.as_str()) {
+        Some(result) => id = id + result,
+        None => ()
+    }
 
-        match chars.next() {
-            Some(result) => current_char = result.to_string(),
-            None => current_char = "".to_string()
-        }
-        match n_hash.get(&current_char.as_str()) {
-            Some(result) => id = id + result,
-            None => ()
-        }
+    match chars.next() {
+        Some(result) => current_char = result.to_string(),
+        None => current_char = "".to_string()
+    }
+    match n_hash.get(&current_char.as_str()) {
+        Some(result) => id = id + result,
+        None => ()
+    }
 
-        match chars.next() {
-            Some(result) => current_char = result.to_string(),
-            None => current_char = "".to_string()
-        }
-        // special case for none because i am figuring out how to make a good system later. it works™
-        match s_hash.get(&current_char.as_str()) {
-            Some(result) => id = id + result,
-            None => id = id + 3
-        }
+    match chars.next() {
+        Some(result) => current_char = result.to_string(),
+        None => current_char = "".to_string()
+    }
+    // special case for none because i am figuring out how to make a good system later. it works™
+    match s_hash.get(&current_char.as_str()) {
+        Some(result) => id = id + result,
+        None => id = id + 3
+    }
 
-        // convert each id to what it means
-        match char_hash.get(&id) {
-            Some(result) => print!("{}", result),
-            None => ()
-        }
-    }   
-
-    again();
+    return id;
 }
