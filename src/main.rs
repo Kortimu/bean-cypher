@@ -1,5 +1,5 @@
 use std::io;
-mod utils;
+mod hash_convert;
 #[path = "encode.rs"] mod encode;
 #[path = "decode.rs"] mod decode;
 #[macro_use]

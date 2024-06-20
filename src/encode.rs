@@ -1,4 +1,4 @@
-use crate::{again, utils::hash_convert::char_to_id};
+use crate::{again, hash_convert::hash_convert::char_to_id};
 use std::{collections::HashMap, io};
 
 pub fn run() {
