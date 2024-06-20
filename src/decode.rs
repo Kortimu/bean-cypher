@@ -1,4 +1,4 @@
-use crate::{again, hash_convert::hash_convert::print_from_id};
+use crate::{again, hash_convert::hash_convert::id_to_string};
 use std::{collections::HashMap, io};
 
 pub fn run() {
@@ -23,7 +23,8 @@ pub fn run() {
         let id = decode_beans(bean);
 
         // convert each id to what it means
-        print_from_id(id);
+        let string = id_to_string(id);
+        print!("{}", string);
     }   
 
     again();

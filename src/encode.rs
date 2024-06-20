@@ -1,4 +1,4 @@
-use crate::{again, hash_convert::hash_convert::char_to_id};
+use crate::{again, hash_convert::hash_convert::{string_to_id, find_phrases, id_to_string}};
 use std::{collections::HashMap, io};
 
 pub fn run() {
@@ -11,9 +11,29 @@ pub fn run() {
 
     let mut ids = Vec::new();
 
+    let phrases = find_phrases(&text);
+
     // convert each character to an id
     for char in text.chars() {
-        ids.append(&mut char_to_id(char));
+        let id = string_to_id(char.to_string());
+        ids.insert(ids.len(), id);
+    }
+    
+    // blast in the phrases in ids (god this is gonna be fun won't it)
+    for phrase in phrases {
+        let index = phrase.0;
+        let id = phrase.1;
+        let length = id_to_string(id).len();
+
+        ids.remove(index.try_into().unwrap());
+        ids.insert(index.try_into().unwrap(), id);
+
+        for _ in 0..(length - 1) {
+            ids.remove((index + 1).try_into().unwrap());
+        }
+        for _ in 0..(length - 1) {
+            ids.insert((index + 1).try_into().unwrap(), -1);
+        }
     }
 
     // print first two "beans" to mark the major and minor version of the program this was encoded in
@@ -29,63 +49,66 @@ pub fn run() {
     // convert each id to its corresponding "beans"
     // TODO: each can have its hash, sure, but how bout making the match not repeat 5 times?
     for id in ids {
-        let b = id / 72;
-        let b_hash = HashMap::from([
-            (0, "b"),
-            (1, "B"),
-            (2, "6")
-        ]);
-        match b_hash.get(&b) {
-            Some(result) => print!("{}", result),
-            None => ()
+        // removal of dummies
+        if id != -1 {
+            let b = id / 72;
+            let b_hash = HashMap::from([
+                (0, "b"),
+                (1, "B"),
+                (2, "6")
+            ]);
+            match b_hash.get(&b) {
+                Some(result) => print!("{}", result),
+                None => ()
+            }
+    
+            let e = (id % 72) / 24;
+            let e_hash = HashMap::from([
+                (0, "e"),
+                (1, "E"),
+                (2, "3")
+            ]);
+            match e_hash.get(&e) {
+                Some(result) => print!("{}", result),
+                None => ()
+            }
+    
+            let a = (id % 24) / 8;
+            let a_hash = HashMap::from([
+                (0, "a"),
+                (1, "A"),
+                (2, "4")
+            ]);
+            match a_hash.get(&a) {
+                Some(result) => print!("{}", result),
+                None => ()
+            }
+    
+            let n = (id % 8) / 4;
+            let n_hash = HashMap::from([
+                (0, "n"),
+                (1, "N")
+            ]);
+            match n_hash.get(&n) {
+                Some(result) => print!("{}", result),
+                None => ()
+            }
+    
+            let s = id % 4;
+            let s_hash = HashMap::from([
+                (0, "s"),
+                (1, "S"),
+                (2, "5"),
+                (3, "")
+            ]);
+            match s_hash.get(&s) {
+                Some(result) => print!("{}", result),
+                None => ()
+            }
+    
+            // beans beans >>> beansbeans
+            print!(" ");
         }
-
-        let e = (id % 72) / 24;
-        let e_hash = HashMap::from([
-            (0, "e"),
-            (1, "E"),
-            (2, "3")
-        ]);
-        match e_hash.get(&e) {
-            Some(result) => print!("{}", result),
-            None => ()
-        }
-
-        let a = (id % 24) / 8;
-        let a_hash = HashMap::from([
-            (0, "a"),
-            (1, "A"),
-            (2, "4")
-        ]);
-        match a_hash.get(&a) {
-            Some(result) => print!("{}", result),
-            None => ()
-        }
-
-        let n = (id % 8) / 4;
-        let n_hash = HashMap::from([
-            (0, "n"),
-            (1, "N")
-        ]);
-        match n_hash.get(&n) {
-            Some(result) => print!("{}", result),
-            None => ()
-        }
-
-        let s = id % 4;
-        let s_hash = HashMap::from([
-            (0, "s"),
-            (1, "S"),
-            (2, "5"),
-            (3, "")
-        ]);
-        match s_hash.get(&s) {
-            Some(result) => print!("{}", result),
-            None => ()
-        }
-
-        // beans beans >>> beansbeans
-        print!(" ");
     }
 
     again();
