@@ -46,6 +46,8 @@ pub fn run() {
 
     println!("---------------------------------------");
 
+    let mut output = String::new();
+
     // convert each id to its corresponding "beans"
     // TODO: each can have its hash, sure, but how bout making the match not repeat 5 times?
     for id in ids {
@@ -58,9 +60,9 @@ pub fn run() {
                 (2, "6")
             ]);
             match b_hash.get(&b) {
-                Some(result) => print!("{}", result),
+                Some(result) => output.insert_str(output.len(), result),
                 None => ()
-            }
+            };
     
             let e = (id % 72) / 24;
             let e_hash = HashMap::from([
@@ -69,7 +71,7 @@ pub fn run() {
                 (2, "3")
             ]);
             match e_hash.get(&e) {
-                Some(result) => print!("{}", result),
+                Some(result) => output.insert_str(output.len(), result),
                 None => ()
             }
     
@@ -80,7 +82,7 @@ pub fn run() {
                 (2, "4")
             ]);
             match a_hash.get(&a) {
-                Some(result) => print!("{}", result),
+                Some(result) => output.insert_str(output.len(), result),
                 None => ()
             }
     
@@ -90,7 +92,7 @@ pub fn run() {
                 (1, "N")
             ]);
             match n_hash.get(&n) {
-                Some(result) => print!("{}", result),
+                Some(result) => output.insert_str(output.len(), result),
                 None => ()
             }
     
@@ -102,14 +104,14 @@ pub fn run() {
                 (3, "")
             ]);
             match s_hash.get(&s) {
-                Some(result) => print!("{}", result),
+                Some(result) => output.insert_str(output.len(), result),
                 None => ()
             }
     
             // beans beans >>> beansbeans
-            print!(" ");
+            output.insert_str(output.len(), " ");
         }
     }
-
-    again();
+    print!("{}", output);
+    again(Some(output));
 }

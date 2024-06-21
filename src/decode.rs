@@ -19,15 +19,18 @@ pub fn run() {
     // compares this program's version to the version the text was encoded in
     check_version(text_major, text_minor);
 
+    let mut output = String::new();
+
     for bean in beans {
         let id = decode_beans(bean);
 
         // convert each id to what it means
         let string = id_to_string(id);
-        print!("{}", string);
-    }   
+        output.insert_str(output.len(), &string);
+    }
 
-    again();
+    print!("{}", output);
+    again(Some(output));
 }
 
 fn check_version(text_major: i32, text_minor: i32) {
