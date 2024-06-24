@@ -1,4 +1,6 @@
 # Bean Cypher (Alpha)
+![](./bean.png)
+
 A very stupid idea, made as an excuse to *actually* grip with the basics of Rust.
 
 I would explain it how it works, but I'm busy, you know, making the thing work. So later.
