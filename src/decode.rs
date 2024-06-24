@@ -1,5 +1,6 @@
 use crate::{again, hash_convert::hash_convert::id_to_string};
 use std::{collections::HashMap, io};
+use configparser::ini::Ini;
 
 pub fn run() {
     println!("---------------------------------------");
@@ -27,6 +28,20 @@ pub fn run() {
         // convert each id to what it means
         let string = id_to_string(id);
         output.insert_str(output.len(), &string);
+    }
+
+    let mut config = Ini::new();
+    let mut lowercase_output = false;
+
+    match config.load("./config.ini") {
+        Ok(_) => {
+            lowercase_output = config.getbool("settings", "lowercase_output").unwrap().unwrap();
+        },
+        Err(_) => ()
+    }
+
+    if lowercase_output == true {
+        output = output.to_lowercase();
     }
 
     print!("{}", output);
