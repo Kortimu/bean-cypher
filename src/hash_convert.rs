@@ -141,7 +141,7 @@ pub mod hash_convert {
 
         for string in string_hash.values() {
             // those damn funny unicode characters!! (ā, ē, ū and the like)
-            if string.len() > 2 {
+            if string.chars().count() > 1 {
                 match upper_text.find(string) {
                     Some(index) => {
                         // println!("{}", result)

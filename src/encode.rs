@@ -23,7 +23,7 @@ pub fn run() {
     for phrase in phrases {
         let index = phrase.0;
         let id = phrase.1;
-        let length = id_to_string(id).len();
+        let length = id_to_string(id).chars().count();
 
         ids.remove(index.try_into().unwrap());
         ids.insert(index.try_into().unwrap(), id);
