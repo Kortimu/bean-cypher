@@ -85,9 +85,7 @@ pub mod hash_convert {
             (76, "{".to_string()),
             (77, "|".to_string()),
             (78, "}".to_string()),
-            (79, "~".to_string()),
-            (80, "GOD".to_string()),
-            (81, "MUŠAS".to_string())
+            (79, "~".to_string())
         ]);
 
         let mut correct_hash: HashMap<i32, String> = HashMap::new();
