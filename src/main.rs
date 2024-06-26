@@ -10,9 +10,9 @@ fn main() {
     println!("=======================================");
     println!("Bean Cypher Alpha v{} - Coming Soon™", version);
     println!("=======================================");
-    println!("type e => encode sentence");
-    println!("type d => decode sentence");
-    println!("type q => quit");
+    println!("(e)ncode sentence");
+    println!("(d)ecode sentence");
+    println!("(q)uit");
     println!("=======================================");
 
     let mut command = String::new();
@@ -35,9 +35,9 @@ fn main() {
 pub fn again(output: Option<String>) {
     println!("");
     println!("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-    println!("type r - try again");
-    println!("type w - write output to text file");
-    println!("type anything else - quit");
+    println!("(r)epeat command");
+    println!("(w)rite output to text file");
+    println!("type anything else to quit");
     println!("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     let mut command = String::new();
     io::stdin().read_line(&mut command).expect("really dude");
