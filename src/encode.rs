@@ -28,11 +28,9 @@ pub fn run() {
         ids.remove(index.try_into().unwrap());
         ids.insert(index.try_into().unwrap(), id);
 
-        for _ in 0..(length - 1) {
-            ids.remove((index + 1).try_into().unwrap());
-        }
-        for _ in 0..(length - 1) {
-            ids.insert((index + 1).try_into().unwrap(), -1);
+        // replaces every character in the phrase with -1 besides the first character
+        for i in 1..length {
+            let _ = std::mem::replace(&mut ids[index as usize + i], -1);
         }
     }
 

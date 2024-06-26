@@ -85,7 +85,9 @@ pub mod hash_convert {
             (76, "{".to_string()),
             (77, "|".to_string()),
             (78, "}".to_string()),
-            (79, "~".to_string())
+            (79, "~".to_string()),
+            (80, "GOD".to_string()),
+            (81, "MUŠAS".to_string())
         ]);
 
         let mut correct_hash: HashMap<i32, String> = HashMap::new();
@@ -138,24 +140,18 @@ pub mod hash_convert {
         let string_hash = get_hash();
 
         for string in string_hash.values() {
-            // those damn funny unicode characters!! (ā, ē, ū and the like)
             if string.chars().count() > 1 {
-                match upper_text.find(string) {
-                    Some(index) => {
-                        // println!("{}", result)
-                        let phrase = upper_text.get(index..(index + string.len())).unwrap();
+                let results: Vec<_> = upper_text.match_indices(string).collect();
 
-                        let id = string_hash.iter().find_map(|(key, &ref val)|
-                        if val == phrase {
-                            Some(key)
-                        } else {
-                            None
-                        }).unwrap();
-                        
-                        // println!("{:?} oh also {:?}", phrase, id);
-                        phrases.insert(index.try_into().unwrap(), id.to_owned());
-                    },
-                    None => ()
+                // tweaking the index to reference .chars().length instead of .len()
+                // (please god forgive me for this jank)
+                for result in results {
+                    let mut previous_text = upper_text.clone();
+                    previous_text.truncate(result.0);
+
+                    let difference = previous_text.len() - previous_text.chars().count();
+                    let correct_index = result.0 as i32 - difference as i32;
+                    phrases.insert(correct_index.max(0), string_to_id(result.1.to_owned()));
                 }
             }
         }
@@ -180,6 +176,7 @@ pub mod hash_convert {
         }
 
         let id = potential_id.unwrap().to_owned();
+        // println!("{:?} is {:?}", id, upper_char);
         return id;
     }
 }
