@@ -2,7 +2,7 @@ pub mod hash_convert {
     use configparser::ini::Ini;
 
     use crate::fs::File;
-    use std::{collections::HashMap, io::{BufRead, BufReader}};
+    use std::{  collections::HashMap, io::{BufRead, BufReader}};
 
     fn get_hash() -> HashMap<i32, String> {
         let string_hash: HashMap<i32, String> = HashMap::from([
@@ -136,8 +136,16 @@ pub mod hash_convert {
         let upper_text = text.to_uppercase();
         let mut phrases: HashMap<i32, i32> = HashMap::new();
         let string_hash = get_hash();
+        
+        // afaik hashmaps pick randomly, we want to start with phrases that have the longest length to have as little bullshit as possible
+        let mut string_hash_values = Vec::new();
+        for value in string_hash.values() {
+            string_hash_values.insert(string_hash_values.len(), value);
+        }
+        string_hash_values.sort_by_key(|k| k.len());
+        string_hash_values.reverse();
 
-        for string in string_hash.values() {
+        for string in string_hash_values {
             if string.chars().count() > 1 {
                 let results: Vec<_> = upper_text.match_indices(string).collect();
 
@@ -168,7 +176,7 @@ pub mod hash_convert {
             None
         });
 
-        // check for \r and \n
+        // check for any unrecognized characters
         if potential_id.is_none() {
             return -1;
         }

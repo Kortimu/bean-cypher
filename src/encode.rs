@@ -25,12 +25,23 @@ pub fn run() {
         let id = phrase.1;
         let length = id_to_string(id).chars().count();
 
-        ids.remove(index.try_into().unwrap());
-        ids.insert(index.try_into().unwrap(), id);
+        // -1 is already filtered, gotta avoid filtering twice my god that would suck
+        let mut taken = false;
+        for i in index..index + length as i32 - 1 {
+            if ids.get(i as usize).unwrap().to_owned() == -1 {
+                taken = true;
+            }
+        }
 
-        // replaces every character in the phrase with -1 besides the first character
-        for i in 1..length {
-            let _ = std::mem::replace(&mut ids[index as usize + i], -1);
+        // if ids.get(index as usize).unwrap().to_owned() != -1 {
+        if taken == false {
+            ids.remove(index.try_into().unwrap());
+            ids.insert(index.try_into().unwrap(), id);
+    
+            // replaces every character in the phrase with -1 besides the first character
+            for i in 1..length {
+                let _ = std::mem::replace(&mut ids[index as usize + i], -1);
+            }
         }
     }
 
