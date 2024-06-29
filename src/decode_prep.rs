@@ -1,5 +1,5 @@
 use std::{fs::File, io::{self, Read}};
-use crate::decode;
+use crate::{decode, decode_prep};
 
 pub fn run() {
     println!("---------------------------------------");
@@ -21,16 +21,13 @@ pub fn run_file() {
 
     let mut file_name = String::new();
     io::stdin().read_line(&mut file_name).expect("god damn it");
-    println!("{:?}", file_name);
     file_name.pop();
     file_name.pop();
     
     let file_path = "./".to_owned() + &file_name + ".txt";
-    println!("{:?}", file_path);
-    
     let potential_file = File::open(file_path);
 
-    // error if can't find file
+    // TODO: error if can't find file
 
     if potential_file.is_ok() {
         let mut file = potential_file.expect("ah fuck");
@@ -38,6 +35,10 @@ pub fn run_file() {
         file.read_to_string(&mut contents).expect("ah fuck");
         decode::run(contents);
     } else {
-        println!("i failed sir :[");
+        println!("");
+        println!("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        println!("Wrong file name or file doesn't exist next to executable.");
+        println!("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        decode_prep::run_file();
     }
 }
