@@ -1,16 +1,9 @@
 use crate::{again, hash_convert::hash_convert::id_to_string};
-use std::{collections::HashMap, io};
+use std::collections::HashMap;
 use configparser::ini::Ini;
 
-pub fn run() {
-    println!("---------------------------------------");
-    println!("we decodin baby! type yer nonsense :3");
-    println!("---------------------------------------");
-
-    let mut text = String::new();
-    io::stdin().read_line(&mut text).expect("god damn it");
-
-    println!("---------------------------------------");
+pub fn run(text: String) {
+    
     
     let mut beans = text.split(' ');
 

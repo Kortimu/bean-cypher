@@ -1,7 +1,9 @@
 use std::{fs, io};
 mod hash_convert;
 #[path = "encode.rs"] mod encode;
+#[path = "encode_prep.rs"] mod encode_prep;
 #[path = "decode.rs"] mod decode;
+#[path = "decode_prep.rs"] mod decode_prep;
 
 fn main() {
     let version = env!("CARGO_PKG_VERSION");
@@ -10,17 +12,21 @@ fn main() {
     println!("=======================================");
     println!("Bean Cypher Alpha v{} - Coming Soon™", version);
     println!("=======================================");
-    println!("(e)ncode sentence");
-    println!("(d)ecode sentence");
+    println!("(e)ncode text");
+    println!("(d)ecode text");
     println!("(q)uit");
+    println!("---------------------------------------");
+    println!("append \"f\" to read from text file (ef/df)");
     println!("=======================================");
 
     let mut command = String::new();
     io::stdin().read_line(&mut command).expect("fellas we fucked up");
 
     match command.trim().to_lowercase().as_str() {
-        "e" => encode::run(),
-        "d" => decode::run(),
+        "e" => encode_prep::run(),
+        "ef" => encode_prep::run_file(),
+        "d" => decode_prep::run(),
+        "df" => decode_prep::run_file(),
         "q" => std::process::exit(0),
         _ => {
             println!("");

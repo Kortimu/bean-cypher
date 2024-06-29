@@ -1,13 +1,8 @@
 use crate::{again, hash_convert::hash_convert::{string_to_id, find_phrases, id_to_string}};
-use std::{collections::HashMap, io};
+use std::collections::HashMap;
 
-pub fn run() {
-    println!("---------------------------------------");
-    println!("we encodin baby! type yer sentence :3");
-    println!("---------------------------------------");
-
-    let mut text = String::new();
-    io::stdin().read_line(&mut text).expect("god damn it");
+pub fn run(text: String) {
+    
 
     let mut ids = Vec::new();
 
