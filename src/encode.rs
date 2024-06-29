@@ -33,7 +33,6 @@ pub fn run() {
             }
         }
 
-        // if ids.get(index as usize).unwrap().to_owned() != -1 {
         if taken == false {
             ids.remove(index.try_into().unwrap());
             ids.insert(index.try_into().unwrap(), id);
