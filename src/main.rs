@@ -1,9 +1,9 @@
 use std::{fs, io};
 mod hash_convert;
-#[path = "encode.rs"] mod encode;
 #[path = "encode_prep.rs"] mod encode_prep;
-#[path = "decode.rs"] mod decode;
 #[path = "decode_prep.rs"] mod decode_prep;
+#[path = "encode.rs"] mod encode;
+#[path = "decode.rs"] mod decode;
 
 fn main() {
     let version = env!("CARGO_PKG_VERSION");
