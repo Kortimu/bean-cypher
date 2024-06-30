@@ -115,6 +115,8 @@ pub fn run(text: String) {
             output.insert_str(output.len(), " ");
         }
     }
+    // remove final space after final bean
+    output.pop();
     print!("{}", output);
     again(Some(output));
 }
