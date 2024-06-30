@@ -47,7 +47,7 @@ pub fn run(text: String) {
 
     match config.load("./config.ini") {
         Ok(_) => {
-            lowercase_output = config.getbool("settings", "lowercase_output").unwrap().unwrap();
+            lowercase_output = config.getbool("settings", "lowercase_output").unwrap_or(Some(false)).unwrap_or(false);
         },
         Err(_) => ()
     }

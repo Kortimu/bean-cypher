@@ -98,16 +98,24 @@ pub mod hash_convert {
                     Some(result) => {
                         let chosen_cypher_location = "./cyphers/".to_string() + &result + ".txt";
 
-                        let cypher_file = File::open(chosen_cypher_location);
+                        // let cypher_file = ;
 
-                        let buffered = BufReader::new(cypher_file.unwrap());
+                        match File::open(chosen_cypher_location) {
+                            Ok(cypher_file) => {
+                                let buffered = BufReader::new(cypher_file);
 
-                        // FIXME: i fucking hate this look how to make it not index fuck me
-                        let mut quirky_index = 0;
-                        for line in buffered.lines() {
-                            correct_hash.insert(quirky_index, line.unwrap());
-                            quirky_index += 1;
+                                let mut hash_index = 0;
+                                for line in buffered.lines() {
+                                    correct_hash.insert(hash_index, line.unwrap());
+                                    hash_index += 1;
+                                }
+                            }
+                            Err(_) => {
+                                correct_hash = string_hash;
+                            }
                         }
+
+                        
                     }
                     None => {
                         correct_hash = string_hash;
