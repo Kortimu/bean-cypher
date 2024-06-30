@@ -1,5 +1,8 @@
 use std::{fs, io};
+
+use notifications::info_message;
 mod hash_convert;
+#[path = "notifications.rs"] mod notifications;
 #[path = "encode_prep.rs"] mod encode_prep;
 #[path = "decode_prep.rs"] mod decode_prep;
 #[path = "encode.rs"] mod encode;
@@ -29,10 +32,7 @@ fn main() {
         "df" => decode_prep::run_file(),
         "q" => std::process::exit(0),
         _ => {
-            println!("");
-            println!("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            println!("Wrong command. Just type in a single letter in the command prompt.");
-            println!("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            notifications::error_message("Wrong command. Just type in a single letter in the command prompt.");
             main();
         }
     }
@@ -54,10 +54,7 @@ pub fn again(output: Option<String>) {
             // TODO: see those test cases maybe idk?
             let _ = fs::write("output.txt", output.unwrap_or(String::from("There was a problem with writing to the file. whoops")));
 
-            println!("---------------------------------------");
-            println!("file written successfully i hope :3");
-            println!("---------------------------------------");
-
+            info_message("file written successfully i hope :3");
             main();
         },
         _ => std::process::exit(0)

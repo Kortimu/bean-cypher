@@ -1,4 +1,4 @@
-use crate::{again, hash_convert::hash_convert::id_to_string, main};
+use crate::{again, hash_convert::hash_convert::id_to_string, main, notifications::error_message};
 use std::collections::HashMap;
 use configparser::ini::Ini;
 
@@ -11,20 +11,14 @@ pub fn run(text: String) {
     match beans.next() {
         Some(result) => text_major = decode_beans(result),
         None => {
-            println!("");
-            println!("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            println!("The given text could not be decoded. Are you sure it's the right one mate?");
-            println!("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            error_message("The given text could not be decoded. Are you sure it's the right one mate?");
             main();
         }
     }
     match beans.next() {
         Some(result) => text_minor = decode_beans(result),
         None => {
-            println!("");
-            println!("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            println!("The given text could not be decoded. Are you sure it's the right one mate?");
-            println!("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            error_message("The given text could not be decoded. Are you sure it's the right one mate?");
             main();
         }
     }
