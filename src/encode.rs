@@ -2,8 +2,6 @@ use crate::{again, hash_convert::hash_convert::{string_to_id, find_phrases, id_t
 use std::collections::HashMap;
 
 pub fn run(text: String) {
-    
-
     let mut ids = Vec::new();
 
     let phrases = find_phrases(&text);

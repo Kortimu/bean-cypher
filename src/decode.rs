@@ -3,8 +3,6 @@ use std::collections::HashMap;
 use configparser::ini::Ini;
 
 pub fn run(text: String) {
-    
-    
     let mut beans = text.split(' ');
 
     let text_major = decode_beans(beans.next().unwrap());
