@@ -2,25 +2,23 @@ use crate::{again, hash_convert::hash_convert::id_to_string, main, notifications
 use std::collections::HashMap;
 use configparser::ini::Ini;
 
-pub fn run(text: String) {
+pub fn run(text: &str) {
     let mut beans = text.split(' ');
 
     let mut text_major: i32 = 69;
     let mut text_minor: i32 = 69;
 
-    match beans.next() {
-        Some(result) => text_major = decode_beans(result),
-        None => {
-            error_message("The given text could not be decoded. Are you sure it's the right one mate?");
-            main();
-        }
+    if let Some(result) = beans.next() {
+        text_major = decode_beans(result);
+    } else {
+        error_message("The given text could not be decoded. Are you sure it's the right one mate?");
+        main();
     }
-    match beans.next() {
-        Some(result) => text_minor = decode_beans(result),
-        None => {
-            error_message("The given text could not be decoded. Are you sure it's the right one mate?");
-            main();
-        }
+    if let Some(result) = beans.next() {
+        text_minor = decode_beans(result);
+    } else {
+        error_message("The given text could not be decoded. Are you sure it's the right one mate?");
+        main();
     }
 
     // compares this program's version to the version the text was encoded in
@@ -37,36 +35,33 @@ pub fn run(text: String) {
     }
 
     let mut config = Ini::new();
-    let mut lowercase_output = false;
+    let lowercase_output = if config.load("./config.ini").is_ok() {
+        config.getbool("settings", "lowercase_output").unwrap_or(Some(false)).unwrap_or(false)
+    } else {
+        false
+    };
 
-    match config.load("./config.ini") {
-        Ok(_) => {
-            lowercase_output = config.getbool("settings", "lowercase_output").unwrap_or(Some(false)).unwrap_or(false);
-        },
-        Err(_) => ()
-    }
-
-    if lowercase_output == true {
+    if lowercase_output {
         output = output.to_lowercase();
     }
 
-    print!("{}", output);
+    print!("{output}");
     again(Some(output));
 }
 
 fn check_version(text_major: i32, text_minor: i32) {
-    let program_major = env!("CARGO_PKG_VERSION_MAJOR").parse::<i32>().unwrap();
-    let program_minor = env!("CARGO_PKG_VERSION_MINOR").parse::<i32>().unwrap();
+    let program_major = env!("CARGO_PKG_VERSION_MAJOR").parse::<i32>().expect("Error parsing package's major version in Cargo.toml.");
+    let program_minor = env!("CARGO_PKG_VERSION_MINOR").parse::<i32>().expect("Error parsing package's minor version in Cargo.toml.");
 
     if program_major != text_major || program_minor != text_minor {
-        println!("");
+        println!();
         println!("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         println!("The text was encoded in a different version of the program. It may get decoded wrongly.");
         println!("- - - - - - - - - - - - - - - - - - - -");
-        println!("Text was encoded in v{}.{}.x", text_major, text_minor);
-        println!("Text is decoded in v{}.{}.x", program_major, program_minor);
+        println!("Text was encoded in v{text_major}.{text_minor}.x");
+        println!("Text is decoded in v{program_major}.{program_minor}.x");
         println!("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        println!("");
+        println!();
     }
 }
 
@@ -105,49 +100,45 @@ fn decode_beans (bean: &str) -> i32 {
     // yoink first character, convert to string, check against hash and add to id. do this 5 times. is there a better way? probably but i am learning so any sins and felonies can be forgiven
     match chars.next() {
         Some(result) => current_char = result.to_string(),
-        None => current_char = "".to_string()
+        None => current_char = String::new()
     }
-    match b_hash.get(&current_char.as_str()) {
-        Some(result) => id = id + result,
-        None => ()
-    }
-
-    match chars.next() {
-        Some(result) => current_char = result.to_string(),
-        None => current_char = "".to_string()
-    }
-    match e_hash.get(&current_char.as_str()) {
-        Some(result) => id = id + result,
-        None => ()
+    if let Some(result) = b_hash.get(&current_char.as_str()) {
+        id += result;
     }
 
     match chars.next() {
         Some(result) => current_char = result.to_string(),
-        None => current_char = "".to_string()
+        None => current_char = String::new()
     }
-    match a_hash.get(&current_char.as_str()) {
-        Some(result) => id = id + result,
-        None => ()
-    }
-
-    match chars.next() {
-        Some(result) => current_char = result.to_string(),
-        None => current_char = "".to_string()
-    }
-    match n_hash.get(&current_char.as_str()) {
-        Some(result) => id = id + result,
-        None => ()
+    if let Some(result) = e_hash.get(&current_char.as_str()) {
+        id += result;
     }
 
     match chars.next() {
         Some(result) => current_char = result.to_string(),
-        None => current_char = "".to_string()
+        None => current_char = String::new()
+    }
+    if let Some(result) = a_hash.get(&current_char.as_str()) {
+        id += result;
+    }
+
+    match chars.next() {
+        Some(result) => current_char = result.to_string(),
+        None => current_char = String::new()
+    }
+    if let Some(result) = n_hash.get(&current_char.as_str()) {
+        id += result;
+    }
+
+    match chars.next() {
+        Some(result) => current_char = result.to_string(),
+        None => current_char = String::new()
     }
     // special case for none because i am figuring out how to make a good system later. it works™
     match s_hash.get(&current_char.as_str()) {
-        Some(result) => id = id + result,
-        None => id = id + 3
+        Some(result) => id += result,
+        None => id += 3
     }
 
-    return id;
+    id
 }

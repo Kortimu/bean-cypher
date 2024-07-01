@@ -104,10 +104,8 @@ pub mod hash_convert {
                             Ok(cypher_file) => {
                                 let buffered = BufReader::new(cypher_file);
 
-                                let mut hash_index = 0;
-                                for line in buffered.lines() {
-                                    correct_hash.insert(hash_index, line.unwrap());
-                                    hash_index += 1;
+                                for (hash_index, line) in buffered.lines().enumerate() {
+                                    correct_hash.insert(hash_index as i32, line.unwrap());
                                 }
                             }
                             Err(_) => {
@@ -126,16 +124,16 @@ pub mod hash_convert {
                 correct_hash = string_hash;
             }
         }
-        return correct_hash;
+        correct_hash
     }
 
     pub fn id_to_string(id: i32) -> String {
         let string_hash = get_hash();
-        match string_hash.get(&id) {
-            Some(result) => return result.to_string(),
-            None => ()
+        
+        if let Some(result) = string_hash.get(&id) {
+            return result.to_string()
         }
-        return "".to_string();
+        String::new()
     }
 
     // TODO: prioritize longer length strings
@@ -165,19 +163,19 @@ pub mod hash_convert {
 
                     let difference = previous_text.len() - previous_text.chars().count();
                     let correct_index = result.0 as i32 - difference as i32;
-                    phrases.insert(correct_index.max(0), string_to_id(result.1.to_owned()));
+                    phrases.insert(correct_index.max(0), string_to_id(result.1));
                 }
             }
         }
-        return phrases;
+        phrases
     }
 
-    pub fn string_to_id(string: String) -> i32 {
+    pub fn string_to_id(string: &str) -> i32 {
         let upper_char = &string.to_uppercase();
         let string_hash = get_hash();
 
         // iterate through values until we find a matching one, pass key (saves editing 2 different hashes)
-        let potential_id = string_hash.iter().find_map(|(key, &ref val)|
+        let potential_id = string_hash.iter().find_map(|(key, val)|
         if val == upper_char {
             Some(key)
         } else {
@@ -189,8 +187,8 @@ pub mod hash_convert {
             return -1;
         }
 
-        let id = potential_id.unwrap().to_owned();
+        
         // println!("{:?} is {:?}", id, upper_char);
-        return id;
+        potential_id.unwrap().to_owned()
     }
 }

@@ -7,7 +7,7 @@ pub fn run() {
     let mut text = String::new();
     io::stdin().read_line(&mut text).expect("god damn it");
 
-    encode::run(text);
+    encode::run(&text);
 }
 
 pub fn run_file() {
@@ -25,7 +25,7 @@ pub fn run_file() {
         let mut file = potential_file.expect("ah fuck");
         let mut contents = String::new();
         file.read_to_string(&mut contents).expect("ah fuck");
-        encode::run(contents);
+        encode::run(&contents);
     } else {
         error_message("Wrong file name or file doesn't exist next to executable.");
         encode_prep::run_file();

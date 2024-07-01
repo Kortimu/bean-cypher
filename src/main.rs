@@ -11,9 +11,9 @@ mod hash_convert;
 fn main() {
     let version = env!("CARGO_PKG_VERSION");
 
-    println!("");
+    println!();
     println!("=======================================");
-    println!("Bean Cypher Alpha v{} - Coming Soon™", version);
+    println!("Bean Cypher Alpha v{version} - Coming Soon™");
     println!("=======================================");
     println!("(e)ncode text");
     println!("(d)ecode text");
@@ -39,7 +39,7 @@ fn main() {
 }
 
 pub fn again(output: Option<String>) {
-    println!("");
+    println!();
     println!("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     println!("(r)epeat command");
     println!("(w)rite output to text file");
@@ -52,7 +52,7 @@ pub fn again(output: Option<String>) {
         "r" => main(),
         "w" => {
             // TODO: see those test cases maybe idk?
-            let _ = fs::write("output.txt", output.unwrap_or(String::from("There was a problem with writing to the file. whoops")));
+            let _ = fs::write("output.txt", output.unwrap_or_else(|| String::from("There was a problem with writing to the file. whoops")));
 
             info_message("file written successfully i hope :3");
             main();
