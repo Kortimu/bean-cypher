@@ -138,9 +138,9 @@ pub mod hash_convert {
 
     // TODO: prioritize longer length strings
     // TODO: also can we try not nesting this much thanks
-    pub fn find_phrases(text: &str) -> HashMap<i32, i32> {
+    pub fn find_phrases(text: &str) -> HashMap<usize, i32> {
         let upper_text = text.to_uppercase();
-        let mut phrases: HashMap<i32, i32> = HashMap::new();
+        let mut phrases: HashMap<usize, i32> = HashMap::new();
         let string_hash = get_hash();
         
         // afaik hashmaps pick randomly, we want to start with phrases that have the longest length to have as little bullshit as possible
@@ -162,7 +162,7 @@ pub mod hash_convert {
                     previous_text.truncate(result.0);
 
                     let difference = previous_text.len() - previous_text.chars().count();
-                    let correct_index = result.0 as i32 - difference as i32;
+                    let correct_index = result.0 - difference;
                     phrases.insert(correct_index.max(0), string_to_id(result.1));
                 }
             }
