@@ -28,8 +28,8 @@ pub fn run(text: &str) {
         }
 
         if !taken {
-            ids.remove(index.try_into().unwrap());
-            ids.insert(index.try_into().unwrap(), id);
+            ids.remove(index);
+            ids.insert(index, id);
     
             // replaces every character in the phrase with -1 besides the first character
             for i in 1..length {
