@@ -20,7 +20,6 @@ pub fn run(text: &str) {
 
         // -1 is already filtered, gotta avoid filtering twice my god that would suck
         let mut taken = false;
-        #[allow(clippy::cast_possible_truncation)]
         for i in index..index + length - 1 {
             if *ids.get(i).unwrap() == -1 {
                 taken = true;
