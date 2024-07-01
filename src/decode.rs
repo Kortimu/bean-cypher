@@ -46,7 +46,7 @@ pub fn run(text: &str) {
     }
 
     print!("{output}");
-    again(Some(output));
+    again(output);
 }
 
 fn check_version(text_major: i32, text_minor: i32) {

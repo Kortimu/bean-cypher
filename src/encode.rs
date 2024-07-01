@@ -111,5 +111,5 @@ pub fn run(text: &str) {
     // remove final space after final bean
     output.pop();
     print!("{output}");
-    again(Some(output));
+    again(output);
 }

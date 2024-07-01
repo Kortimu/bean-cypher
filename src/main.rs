@@ -38,7 +38,7 @@ fn main() {
     }
 }
 
-pub fn again(output: Option<String>) {
+pub fn again(output: String) {
     println!();
     println!("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     println!("(r)epeat command");
@@ -52,7 +52,7 @@ pub fn again(output: Option<String>) {
         "r" => main(),
         "w" => {
             // TODO: see those test cases maybe idk?
-            let _ = fs::write("output.txt", output.unwrap_or_else(|| String::from("There was a problem with writing to the file. whoops")));
+            let _ = fs::write("output.txt", output);
 
             info_message("file written successfully i hope :3");
             main();
