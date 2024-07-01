@@ -98,8 +98,6 @@ pub mod hash_convert {
                     Some(result) => {
                         let chosen_cypher_location = "./cyphers/".to_string() + &result + ".txt";
 
-                        // let cypher_file = ;
-
                         match File::open(chosen_cypher_location) {
                             Ok(cypher_file) => {
                                 let buffered = BufReader::new(cypher_file);
@@ -187,8 +185,6 @@ pub mod hash_convert {
             return -1;
         }
 
-        
-        // println!("{:?} is {:?}", id, upper_char);
         potential_id.unwrap().to_owned()
     }
 }
