@@ -54,53 +54,53 @@ pub fn run(text: &str) {
     for id in ids {
         // removal of dummies
         if id != usize::MAX {
-            let b = id / 72;
+            let b_part = id / 72;
             let b_hash = HashMap::from([
                 (0, "b"),
                 (1, "B"),
                 (2, "6")
             ]);
-            if let Some(result) = b_hash.get(&b) {
+            if let Some(result) = b_hash.get(&b_part) {
                 output.insert_str(output.len(), result);
             }
     
-            let e = (id % 72) / 24;
+            let e_part = (id % 72) / 24;
             let e_hash = HashMap::from([
                 (0, "e"),
                 (1, "E"),
                 (2, "3")
             ]);
-            if let Some(result) = e_hash.get(&e) {
+            if let Some(result) = e_hash.get(&e_part) {
                 output.insert_str(output.len(), result);
             }
     
-            let a = (id % 24) / 8;
+            let a_part = (id % 24) / 8;
             let a_hash = HashMap::from([
                 (0, "a"),
                 (1, "A"),
                 (2, "4")
             ]);
-            if let Some(result) = a_hash.get(&a) {
+            if let Some(result) = a_hash.get(&a_part) {
                 output.insert_str(output.len(), result);
             }
     
-            let n = (id % 8) / 4;
+            let n_part = (id % 8) / 4;
             let n_hash = HashMap::from([
                 (0, "n"),
                 (1, "N")
             ]);
-            if let Some(result) = n_hash.get(&n) {
+            if let Some(result) = n_hash.get(&n_part) {
                 output.insert_str(output.len(), result);
             }
     
-            let s = id % 4;
+            let s_part = id % 4;
             let s_hash = HashMap::from([
                 (0, "s"),
                 (1, "S"),
                 (2, "5"),
                 (3, "")
             ]);
-            if let Some(result) = s_hash.get(&s) {
+            if let Some(result) = s_hash.get(&s_part) {
                 output.insert_str(output.len(), result);
             }
     
