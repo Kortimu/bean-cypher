@@ -38,6 +38,7 @@ fn main() {
     }
 }
 
+#[allow(clippy::missing_panics_doc)]
 pub fn again(output: String) {
     println!();
     println!("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
