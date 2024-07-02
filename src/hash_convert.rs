@@ -1,9 +1,10 @@
-pub mod hash_convert {
+pub mod hash_conversions {
     use configparser::ini::Ini;
 
     use crate::fs::File;
     use std::{  collections::HashMap, io::{BufRead, BufReader}};
 
+    #[allow(clippy::too_many_lines)]
     fn get_hash() -> HashMap<usize, String> {
         let string_hash: HashMap<usize, String> = HashMap::from([
             (0, "0".to_string()),

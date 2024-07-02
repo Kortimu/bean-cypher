@@ -1,4 +1,4 @@
-use crate::{again, hash_convert::hash_convert::{string_to_id, find_phrases, id_to_string}};
+use crate::{again, hash_convert::hash_conversions::{string_to_id, find_phrases, id_to_string}};
 use std::collections::HashMap;
 
 pub fn run(text: &str) {
