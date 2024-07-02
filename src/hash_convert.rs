@@ -103,7 +103,7 @@ pub mod hash_convert {
                                 let buffered = BufReader::new(cypher_file);
 
                                 for (hash_index, line) in buffered.lines().enumerate() {
-                                    correct_hash.insert(hash_index, line.unwrap());
+                                    correct_hash.insert(hash_index, line.expect("No line found when reading cypher input."));
                                 }
                             }
                             Err(_) => {
@@ -136,9 +136,9 @@ pub mod hash_convert {
 
     // TODO: prioritize longer length strings
     // TODO: also can we try not nesting this much thanks
-    pub fn find_phrases(text: &str) -> HashMap<usize, usize> {
+    pub fn find_phrases(text: &str) -> Vec<(usize, usize)> {
         let upper_text = text.to_uppercase();
-        let mut phrases: HashMap<usize, usize> = HashMap::new();
+        let mut phrases: Vec<(usize, usize)> = Vec::new();
         let string_hash = get_hash();
         
         // afaik hashmaps pick randomly, we want to start with phrases that have the longest length to have as little bullshit as possible
@@ -161,7 +161,7 @@ pub mod hash_convert {
 
                     let difference = previous_text.len() - previous_text.chars().count();
                     let correct_index = result.0 - difference;
-                    phrases.insert(correct_index.max(0), string_to_id(result.1));
+                    phrases.insert(phrases.len(), (correct_index.max(0), string_to_id(result.1)));
                 }
             }
         }
@@ -185,6 +185,6 @@ pub mod hash_convert {
             return usize::MAX;
         }
 
-        potential_id.unwrap().to_owned()
+        *potential_id.expect("When converting a string to id, failed to check for unrecognized characters.")
     }
 }

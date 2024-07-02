@@ -21,7 +21,7 @@ pub fn run(text: &str) {
         // -1 is already filtered, gotta avoid filtering twice my god that would suck
         let mut taken = false;
         for i in index..index + length - 1 {
-            if *ids.get(i).unwrap() == usize::MAX {
+            if *ids.get(i).expect("Phrase ID does not exist where it should. Somehow. what") == usize::MAX {
                 taken = true;
             }
         }
