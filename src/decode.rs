@@ -5,8 +5,8 @@ use configparser::ini::Ini;
 pub fn run(text: &str) {
     let mut beans = text.split(' ');
 
-    let mut text_major: i32 = 69;
-    let mut text_minor: i32 = 69;
+    let mut text_major = 69;
+    let mut text_minor = 69;
 
     if let Some(result) = beans.next() {
         text_major = decode_beans(result);
@@ -49,9 +49,9 @@ pub fn run(text: &str) {
     again(output);
 }
 
-fn check_version(text_major: i32, text_minor: i32) {
-    let program_major = env!("CARGO_PKG_VERSION_MAJOR").parse::<i32>().expect("Error parsing package's major version in Cargo.toml.");
-    let program_minor = env!("CARGO_PKG_VERSION_MINOR").parse::<i32>().expect("Error parsing package's minor version in Cargo.toml.");
+fn check_version(text_major: usize, text_minor: usize) {
+    let program_major = env!("CARGO_PKG_VERSION_MAJOR").parse::<usize>().expect("Error parsing package's major version in Cargo.toml.");
+    let program_minor = env!("CARGO_PKG_VERSION_MINOR").parse::<usize>().expect("Error parsing package's minor version in Cargo.toml.");
 
     if program_major != text_major || program_minor != text_minor {
         println!();
@@ -65,7 +65,7 @@ fn check_version(text_major: i32, text_minor: i32) {
     }
 }
 
-fn decode_beans (bean: &str) -> i32 {
+fn decode_beans (bean: &str) -> usize {
     let b_hash = HashMap::from([
         ("b", 0),
         ("B", 72),

@@ -21,7 +21,7 @@ pub fn run(text: &str) {
         // -1 is already filtered, gotta avoid filtering twice my god that would suck
         let mut taken = false;
         for i in index..index + length - 1 {
-            if *ids.get(i).unwrap() == -1 {
+            if *ids.get(i).unwrap() == usize::MAX {
                 taken = true;
             }
         }
@@ -32,15 +32,15 @@ pub fn run(text: &str) {
     
             // replaces every character in the phrase with -1 besides the first character
             for i in 1..length {
-                let _ = std::mem::replace(&mut ids[index + i], -1);
+                let _ = std::mem::replace(&mut ids[index + i], usize::MAX);
             }
         }
     }
 
     // print first two "beans" to mark the major and minor version of the program this was encoded in
     // this only breaks when either major or minor is > 215. surely this shitpost won't go that far?
-    let version_major = env!("CARGO_PKG_VERSION_MAJOR").parse::<i32>().expect("Error parsing package's major version in Cargo.toml.");
-    let version_minor = env!("CARGO_PKG_VERSION_MINOR").parse::<i32>().expect("Error parsing package's minor version in Cargo.toml.");
+    let version_major = env!("CARGO_PKG_VERSION_MAJOR").parse::<usize>().expect("Error parsing package's major version in Cargo.toml.");
+    let version_minor = env!("CARGO_PKG_VERSION_MINOR").parse::<usize>().expect("Error parsing package's minor version in Cargo.toml.");
 
     ids.insert(0, version_major);
     ids.insert(1, version_minor);
@@ -53,7 +53,7 @@ pub fn run(text: &str) {
     // TODO: each can have its hash, sure, but how bout making the match not repeat 5 times?
     for id in ids {
         // removal of dummies
-        if id != -1 {
+        if id != usize::MAX {
             let b = id / 72;
             let b_hash = HashMap::from([
                 (0, "b"),

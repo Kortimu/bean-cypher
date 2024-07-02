@@ -4,8 +4,8 @@ pub mod hash_convert {
     use crate::fs::File;
     use std::{  collections::HashMap, io::{BufRead, BufReader}};
 
-    fn get_hash() -> HashMap<i32, String> {
-        let string_hash: HashMap<i32, String> = HashMap::from([
+    fn get_hash() -> HashMap<usize, String> {
+        let string_hash: HashMap<usize, String> = HashMap::from([
             (0, "0".to_string()),
             (1, "1".to_string()),
             (2, "2".to_string()),
@@ -88,7 +88,7 @@ pub mod hash_convert {
             (79, "~".to_string())
         ]);
 
-        let mut correct_hash: HashMap<i32, String> = HashMap::new();
+        let mut correct_hash: HashMap<usize, String> = HashMap::new();
 
         let mut config = Ini::new();
 
@@ -103,7 +103,7 @@ pub mod hash_convert {
                                 let buffered = BufReader::new(cypher_file);
 
                                 for (hash_index, line) in buffered.lines().enumerate() {
-                                    correct_hash.insert(hash_index as i32, line.unwrap());
+                                    correct_hash.insert(hash_index, line.unwrap());
                                 }
                             }
                             Err(_) => {
@@ -125,7 +125,7 @@ pub mod hash_convert {
         correct_hash
     }
 
-    pub fn id_to_string(id: i32) -> String {
+    pub fn id_to_string(id: usize) -> String {
         let string_hash = get_hash();
         
         if let Some(result) = string_hash.get(&id) {
@@ -136,9 +136,9 @@ pub mod hash_convert {
 
     // TODO: prioritize longer length strings
     // TODO: also can we try not nesting this much thanks
-    pub fn find_phrases(text: &str) -> HashMap<usize, i32> {
+    pub fn find_phrases(text: &str) -> HashMap<usize, usize> {
         let upper_text = text.to_uppercase();
-        let mut phrases: HashMap<usize, i32> = HashMap::new();
+        let mut phrases: HashMap<usize, usize> = HashMap::new();
         let string_hash = get_hash();
         
         // afaik hashmaps pick randomly, we want to start with phrases that have the longest length to have as little bullshit as possible
@@ -168,7 +168,7 @@ pub mod hash_convert {
         phrases
     }
 
-    pub fn string_to_id(string: &str) -> i32 {
+    pub fn string_to_id(string: &str) -> usize {
         let upper_char = &string.to_uppercase();
         let string_hash = get_hash();
 
@@ -182,7 +182,7 @@ pub mod hash_convert {
 
         // check for any unrecognized characters
         if potential_id.is_none() {
-            return -1;
+            return usize::MAX;
         }
 
         potential_id.unwrap().to_owned()
