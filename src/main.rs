@@ -9,6 +9,11 @@ mod hash_convert;
 #[path = "decode.rs"] mod decode;
 
 fn main() {
+    main_menu();
+}
+
+#[allow(clippy::missing_panics_doc)]
+pub fn main_menu() {
     let version = env!("CARGO_PKG_VERSION");
 
     println!();
@@ -33,7 +38,7 @@ fn main() {
         "q" => std::process::exit(0),
         _ => {
             notifications::error_message("Wrong command. Just type in a single letter in the command prompt.");
-            main();
+            main_menu();
         }
     }
 }
@@ -50,13 +55,13 @@ pub fn again(output: String) {
     io::stdin().read_line(&mut command).expect("really dude");
 
     match command.trim().to_lowercase().as_str() {
-        "r" => main(),
+        "r" => main_menu(),
         "w" => {
             // TODO: see those test cases maybe idk?
             let _ = fs::write("output.txt", output);
 
             info_message("file written successfully i hope :3");
-            main();
+            main_menu();
         },
         _ => std::process::exit(0)
     }
