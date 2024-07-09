@@ -1,7 +1,7 @@
-use crate::{again, hash_convert::hash_conversions::{string_to_id, find_phrases, id_to_string}};
+use crate::hash_convert::hash_conversions::{string_to_id, find_phrases, id_to_string};
 use std::collections::HashMap;
 
-pub fn run(text: &str) {
+pub fn run(text: &str) -> String {
     let mut ids = Vec::new();
 
     let phrases = find_phrases(text);
@@ -45,7 +45,7 @@ pub fn run(text: &str) {
     ids.insert(0, version_major);
     ids.insert(1, version_minor);
 
-    println!("---------------------------------------");
+    // println!("---------------------------------------");
 
     let mut output = String::new();
 
@@ -110,6 +110,7 @@ pub fn run(text: &str) {
     }
     // remove final space after final bean
     output.pop();
-    print!("{output}");
-    again(output);
+    // print!("{output}");
+    // again(output);
+    output
 }

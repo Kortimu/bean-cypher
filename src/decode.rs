@@ -1,8 +1,8 @@
-use crate::{again, hash_convert::hash_conversions::id_to_string, main_menu, notifications::error_message};
+use crate::{hash_convert::hash_conversions::id_to_string, notifications::error_message};
 use std::collections::HashMap;
 use configparser::ini::Ini;
 
-pub fn run(text: &str) {
+pub fn run(text: &str) -> String {
     let mut beans = text.split(' ');
 
     let mut text_major = 69;
@@ -12,13 +12,13 @@ pub fn run(text: &str) {
         text_major = decode_beans(result);
     } else {
         error_message("The given text could not be decoded. Are you sure it's the right one mate?");
-        main_menu();
+        // main_menu();
     }
     if let Some(result) = beans.next() {
         text_minor = decode_beans(result);
     } else {
         error_message("The given text could not be decoded. Are you sure it's the right one mate?");
-        main_menu();
+        // main_menu();
     }
 
     // compares this program's version to the version the text was encoded in
@@ -45,8 +45,9 @@ pub fn run(text: &str) {
         output = output.to_lowercase();
     }
 
-    print!("{output}");
-    again(output);
+    // print!("{output}");
+    // again(output);
+    output
 }
 
 fn check_version(text_major: usize, text_minor: usize) {

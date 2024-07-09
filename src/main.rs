@@ -1,15 +1,21 @@
 use std::{fs, io};
 
-use notifications::info_message;
-mod hash_convert;
-#[path = "notifications.rs"] mod notifications;
-#[path = "encode_prep.rs"] mod encode_prep;
-#[path = "decode_prep.rs"] mod decode_prep;
-#[path = "encode.rs"] mod encode;
-#[path = "decode.rs"] mod decode;
+fn main() -> eframe::Result {
+    let native_options = eframe::NativeOptions {
+        viewport: egui::ViewportBuilder::default()
+            .with_icon(
+                eframe::icon_data::from_png_bytes(&include_bytes!("../assets/bean.png")[..])
+                    .expect("Failed loading the icon.")
+            ),
+        ..Default::default()
+    };
+    eframe::run_native(
+        &format!("Bean Cypher Alpha v{}-dev", env!("CARGO_PKG_VERSION")),
+        native_options,
+        Box::new(|cc| Ok(Box::new(bean_cypher::BeanCypherApp::new(cc))))
+    )
 
-fn main() {
-    main_menu();
+    // main_menu();
 }
 
 #[allow(clippy::missing_panics_doc)]
@@ -31,13 +37,13 @@ pub fn main_menu() {
     io::stdin().read_line(&mut command).expect("fellas we fucked up");
 
     match command.trim().to_lowercase().as_str() {
-        "e" => encode_prep::run(),
-        "ef" => encode_prep::run_file(),
-        "d" => decode_prep::run(),
-        "df" => decode_prep::run_file(),
+        "e" => bean_cypher::encode_prep::run(),
+        "ef" => bean_cypher::encode_prep::run_file(),
+        "d" => bean_cypher::decode_prep::run(),
+        "df" => bean_cypher::decode_prep::run_file(),
         "q" => std::process::exit(0),
         _ => {
-            notifications::error_message("Wrong command. Just type in a single letter in the command prompt.");
+            bean_cypher::notifications::error_message("Wrong command. Just type in a single letter in the command prompt.");
             main_menu();
         }
     }
@@ -60,7 +66,7 @@ pub fn again(output: String) {
             // TODO: see those test cases maybe idk?
             let _ = fs::write("output.txt", output);
 
-            info_message("file written successfully i hope :3");
+            bean_cypher::notifications::info_message("file written successfully i hope :3");
             main_menu();
         },
         _ => std::process::exit(0)

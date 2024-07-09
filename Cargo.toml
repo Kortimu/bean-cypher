@@ -6,6 +6,12 @@ edition = "2021"
 [dependencies]
 configparser = "3.1.0"
 color-eyre = "0.6.3"
+egui = "0.28.1"
+eframe = { version = "0.28", default-features = false, features = [
+    "default_fonts", # Embed the default egui fonts.
+    "glow",          # Use the glow rendering backend. Alternative: "wgpu".
+    # "persistence",   # Enable restoring app state when restarting the app.
+] }
 
 [lints.rust]
 unsafe_code = "forbid"

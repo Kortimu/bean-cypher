@@ -1,8 +1,8 @@
 use std::{fs::File, io::{self, Read}};
-use crate::{encode, encode_prep, notifications::{error_message, info_message}};
+use crate::{encode, encode_prep, notifications::error_message};
 
 pub fn run() {
-    info_message("we encodin baby! type yer sentence :3");
+    // info_message("we encodin baby! type yer sentence :3");
 
     let mut text = String::new();
     io::stdin().read_line(&mut text).expect("god damn it");
@@ -11,7 +11,7 @@ pub fn run() {
 }
 
 pub fn run_file() {
-    info_message("we encodin baby! type yer text file :3");
+    // info_message("we encodin baby! type yer text file :3");
 
     let mut file_name = String::new();
     io::stdin().read_line(&mut file_name).expect("god damn it");

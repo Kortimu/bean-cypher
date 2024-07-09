@@ -1,7 +1,7 @@
 pub mod hash_conversions {
     use configparser::ini::Ini;
 
-    use crate::fs::File;
+    use std::fs::File;
     use std::{  collections::HashMap, io::{BufRead, BufReader}};
 
     #[allow(clippy::too_many_lines)]
