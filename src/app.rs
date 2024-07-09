@@ -1,12 +1,12 @@
-#[path = "encode.rs"] mod encode;
-// #[path = "decode.rs"] mod decode;
+use crate::encode;
 use crate::decode;
 
 #[derive(Default)]
 pub struct BeanCypherApp {
     input: String,
     output: String,
-    show_settings: bool
+    show_settings: bool,
+    set_lowercase: bool
 }
 
 impl BeanCypherApp {
@@ -53,6 +53,9 @@ impl eframe::App for BeanCypherApp {
                     }
                     if ui.button("Decode text").clicked() {
                         self.output = decode::run(&self.input);
+                        if self.set_lowercase == true {
+                            self.output = self.output.to_lowercase();
+                        }
                     }
                 });
 
@@ -72,11 +75,24 @@ impl eframe::App for BeanCypherApp {
             ctx.show_viewport_immediate(
                 egui::ViewportId::from_hash_of("settings"),
                 egui::ViewportBuilder::default()
-                    .with_title(format!("Settings - Bean Cypher v{}-dev", env!("CARGO_PKG_VERSION"))),
+                    .with_title(format!("Settings - Bean Cypher v{}-dev", env!("CARGO_PKG_VERSION")))
+                    .with_maximize_button(false),
                 |ctx, _class| {
                     egui::CentralPanel::default().show(ctx, |ui| {
-                        ui.label("Coming Soon™")
-                    })
+                        ui.heading("Settings");
+                        ui.label("(The settings don't get saved. FOR NOW!)");
+
+                        ui.separator();
+
+                        egui::Grid::new("settings_grid").show(ui, |ui| {
+                            ui.label("Lowercase output");
+                                ui.checkbox(&mut self.set_lowercase, "")
+                        });
+                    });
+
+                    if ctx.input(|i| i.viewport().close_requested()) {
+                        self.show_settings = false;
+                    }
                 }
             );
         }
