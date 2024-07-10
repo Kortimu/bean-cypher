@@ -111,7 +111,8 @@ impl eframe::App for BeanCypherApp {
                         "Settings - Bean Cypher v{}-dev",
                         env!("CARGO_PKG_VERSION")
                     ))
-                    .with_maximize_button(false),
+                    .with_maximize_button(false)
+                    .with_inner_size([400.0, 200.0]),
                 |ctx, _class| {
                     egui::CentralPanel::default().show(ctx, |ui| {
                         ui.heading("Settings");
