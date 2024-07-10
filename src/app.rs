@@ -1,5 +1,3 @@
-use egui::Rect;
-
 use crate::decode;
 use crate::encode;
 
@@ -34,6 +32,15 @@ impl BeanCypherApp {
 
 impl eframe::App for BeanCypherApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        egui::TopBottomPanel::top("top").show(ctx, |ui| {
+            egui::menu::bar(ui, |ui| {
+                if ui.button("Open settings").clicked() {
+                    self.show_settings = true
+                }
+                // TODO: credits button
+            });
+        });
+
         egui::CentralPanel::default().show(ctx, |ui| {
             egui::ScrollArea::vertical().show(ui, |ui| {
                 ui.horizontal(|ui| {
@@ -48,24 +55,6 @@ impl eframe::App for BeanCypherApp {
                         ui.heading("Bean Cypher");
                         ui.label(format!("Alpha v{}-dev", env!("CARGO_PKG_VERSION")));
                     });
-
-                    let set_btn = ui.put(
-                        Rect {
-                            // there might be a less scuffed way of doing this but hey! it works
-                            min: egui::Pos2 {
-                                x: ui.available_width() + 80.0,
-                                y: 10.0,
-                            },
-                            max: egui::Pos2 {
-                                x: ui.available_width() + 170.0,
-                                y: 20.0,
-                            },
-                        },
-                        egui::Button::new("Open settings"),
-                    );
-                    if set_btn.clicked() {
-                        self.show_settings = true
-                    }
                 });
 
                 ui.separator();
