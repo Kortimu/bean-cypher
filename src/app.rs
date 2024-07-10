@@ -9,6 +9,7 @@ pub struct BeanCypherApp {
     output: String,
     show_settings: bool,
     set_lowercase: bool,
+    // set_lang: String
 }
 
 impl BeanCypherApp {
@@ -42,7 +43,6 @@ impl eframe::App for BeanCypherApp {
                         egui::Image::new(egui::include_image!("../assets/bean.png"))
                             .max_width(50.0),
                     );
-
                     ui.vertical(|ui| {
                         ui.add_space(5.0);
                         ui.heading("Bean Cypher");
@@ -119,9 +119,23 @@ impl eframe::App for BeanCypherApp {
 
                         ui.separator();
 
+                        egui::global_dark_light_mode_buttons(ui);
+
                         egui::Grid::new("settings_grid").show(ui, |ui| {
                             ui.label("Lowercase output");
-                            ui.checkbox(&mut self.set_lowercase, "")
+                            ui.checkbox(&mut self.set_lowercase, "");
+                            ui.end_row();
+
+                            // just did some testing, leaving here for later
+
+                            // ui.label("Language");
+                            // egui::ComboBox::from_label("Pick a language :]")
+                            //     .selected_text(format!("{:?}", self.set_lang))
+                            //     .show_ui(ui, |ui| {
+                            //         ui.selectable_value(&mut self.set_lang, String::from("English"), "English (default)");
+                            //         ui.selectable_value(&mut self.set_lang, String::from("Latvian"), "Latvian");
+                            //     }
+                            // );
                         });
                     });
 
