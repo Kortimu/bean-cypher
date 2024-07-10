@@ -53,8 +53,6 @@ pub fn run(text: &str) -> String {
     ids.insert(0, version_major);
     ids.insert(1, version_minor);
 
-    // println!("---------------------------------------");
-
     let mut output = String::new();
 
     // convert each id to its corresponding "beans"
@@ -98,7 +96,5 @@ pub fn run(text: &str) -> String {
     }
     // remove final space after final bean
     output.pop();
-    // print!("{output}");
-    // again(output);
     output
 }

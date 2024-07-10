@@ -1,5 +1,4 @@
-use crate::{hash_convert::hash_conversions::id_to_string, notifications::error_message};
-use configparser::ini::Ini;
+use crate::hash_convert::hash_conversions::id_to_string;
 use std::collections::HashMap;
 
 pub fn run(text: &str) -> String {
@@ -11,14 +10,12 @@ pub fn run(text: &str) -> String {
     if let Some(result) = beans.next() {
         text_major = decode_beans(result);
     } else {
-        error_message("The given text could not be decoded. Are you sure it's the right one mate?");
-        // main_menu();
+        println!("The given text could not be decoded. WARNING NEEDED");
     }
     if let Some(result) = beans.next() {
         text_minor = decode_beans(result);
     } else {
-        error_message("The given text could not be decoded. Are you sure it's the right one mate?");
-        // main_menu();
+        println!("The given text could not be decoded. WARNING NEEDED");
     }
 
     // compares this program's version to the version the text was encoded in
@@ -33,23 +30,7 @@ pub fn run(text: &str) -> String {
         let string = id_to_string(id);
         output.insert_str(output.len(), &string);
     }
-
-    let mut config = Ini::new();
-    let lowercase_output = if config.load("./config.ini").is_ok() {
-        config
-            .getbool("settings", "lowercase_output")
-            .unwrap_or(Some(false))
-            .unwrap_or(false)
-    } else {
-        false
-    };
-
-    if lowercase_output {
-        output = output.to_lowercase();
-    }
-
-    // print!("{output}");
-    // again(output);
+    
     output
 }
 
@@ -65,6 +46,7 @@ fn check_version(text_major: usize, text_minor: usize) {
         println!();
         println!("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         println!("The text was encoded in a different version of the program. It may get decoded wrongly.");
+        println!("WARNING NEEDED");
         println!("- - - - - - - - - - - - - - - - - - - -");
         println!("Text was encoded in v{text_major}.{text_minor}.x");
         println!("Text is decoded in v{program_major}.{program_minor}.x");
