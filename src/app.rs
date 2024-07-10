@@ -1,3 +1,4 @@
+use std::fs;
 use std::io::Read;
 
 use crate::decode;
@@ -39,7 +40,7 @@ impl eframe::App for BeanCypherApp {
                 ui.menu_button("File", |ui| {
                     if ui.button("Encode from file...").clicked() {
                         let file_path = rfd::FileDialog::new()
-                            .add_filter("text", &["txt"])
+                            .add_filter("Text", &["txt"])
                             .pick_file()
                             .expect(
                                 "Error with selecting file. Behaviour will be implemented later.",
@@ -58,7 +59,7 @@ impl eframe::App for BeanCypherApp {
                     }
                     if ui.button("Decode from file...").clicked() {
                         let file_path = rfd::FileDialog::new()
-                            .add_filter("text", &["txt"])
+                            .add_filter("Text", &["txt"])
                             .pick_file()
                             .expect(
                                 "Error with selecting file. Behaviour will be implemented later.",
@@ -71,6 +72,9 @@ impl eframe::App for BeanCypherApp {
                             let mut contents = String::new();
                             file.read_to_string(&mut contents).expect("ah fuck");
                             self.output = decode::run(&contents);
+                            if self.set_lowercase {
+                                self.output = self.output.to_lowercase();
+                            }
                         } else {
                             todo!();
                         }
@@ -133,9 +137,21 @@ impl eframe::App for BeanCypherApp {
 
                 ui.separator();
 
-                if ui.button("Copy to clipboard").clicked() {
-                    ctx.copy_text(self.output.clone());
-                }
+                ui.horizontal(|ui| {
+                    if ui.button("Copy to clipboard").clicked() {
+                        ctx.copy_text(self.output.clone());
+                    }
+                    if ui.button("Save output as...").clicked() {
+                        let dialog = rfd::FileDialog::new()
+                            .set_file_name("output.txt")
+                            .add_filter("Text", &["txt"])
+                            .save_file();
+
+                        if let Some(file) = dialog {
+                            let _ = fs::write(file, self.output.clone());
+                        }
+                    }
+                });
             });
         });
 
