@@ -71,6 +71,10 @@ impl eframe::App for BeanCypherApp {
                             todo!();
                         }
                     }
+                    // reminder: this will probably be only on windows
+                    if ui.button("Quit").clicked() {
+                        std::process::exit(0);
+                    }
                 });
 
                 if ui.button("Open settings").clicked() {
