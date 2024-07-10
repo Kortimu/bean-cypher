@@ -41,7 +41,9 @@ impl eframe::App for BeanCypherApp {
                         let file_path = rfd::FileDialog::new()
                             .add_filter("text", &["txt"])
                             .pick_file()
-                            .unwrap();
+                            .expect(
+                                "Error with selecting file. Behaviour will be implemented later.",
+                            );
 
                         let potential_file = std::fs::File::open(file_path);
 
@@ -58,7 +60,9 @@ impl eframe::App for BeanCypherApp {
                         let file_path = rfd::FileDialog::new()
                             .add_filter("text", &["txt"])
                             .pick_file()
-                            .expect("Error with selecting file. Behaviour will be implemented later.");
+                            .expect(
+                                "Error with selecting file. Behaviour will be implemented later.",
+                            );
 
                         let potential_file = std::fs::File::open(file_path);
 
@@ -152,24 +156,28 @@ impl eframe::App for BeanCypherApp {
 
                         ui.separator();
 
-                        egui::global_dark_light_mode_buttons(ui);
+                        egui::Grid::new("settings_grid")
+                            .striped(true)
+                            .show(ui, |ui| {
+                                ui.label("Theme");
+                                egui::global_dark_light_mode_buttons(ui);
+                                ui.end_row();
 
-                        egui::Grid::new("settings_grid").show(ui, |ui| {
-                            ui.label("Lowercase output");
-                            ui.checkbox(&mut self.set_lowercase, "");
-                            ui.end_row();
+                                ui.label("Lowercase output");
+                                ui.checkbox(&mut self.set_lowercase, "");
+                                ui.end_row();
 
-                            // just did some testing, leaving here for later
+                                // just did some testing, leaving here for later
 
-                            // ui.label("Language");
-                            // egui::ComboBox::from_label("Pick a language :]")
-                            //     .selected_text(format!("{:?}", self.set_lang))
-                            //     .show_ui(ui, |ui| {
-                            //         ui.selectable_value(&mut self.set_lang, String::from("English"), "English (default)");
-                            //         ui.selectable_value(&mut self.set_lang, String::from("Latvian"), "Latvian");
-                            //     }
-                            // );
-                        });
+                                // ui.label("Language");
+                                // egui::ComboBox::from_label("Pick a language :]")
+                                //     .selected_text(format!("{:?}", self.set_lang))
+                                //     .show_ui(ui, |ui| {
+                                //         ui.selectable_value(&mut self.set_lang, String::from("English"), "English (default)");
+                                //         ui.selectable_value(&mut self.set_lang, String::from("Latvian"), "Latvian");
+                                //     }
+                                // );
+                            });
                     });
 
                     if ctx.input(|i| i.viewport().close_requested()) {
