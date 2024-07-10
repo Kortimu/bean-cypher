@@ -1,5 +1,8 @@
-use std::{fs::File, io::{self, Read}};
 use crate::{encode, encode_prep, notifications::error_message};
+use std::{
+    fs::File,
+    io::{self, Read},
+};
 
 pub fn run() {
     // info_message("we encodin baby! type yer sentence :3");

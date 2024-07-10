@@ -1,6 +1,6 @@
 use crate::{hash_convert::hash_conversions::id_to_string, notifications::error_message};
-use std::collections::HashMap;
 use configparser::ini::Ini;
+use std::collections::HashMap;
 
 pub fn run(text: &str) -> String {
     let mut beans = text.split(' ');
@@ -36,7 +36,10 @@ pub fn run(text: &str) -> String {
 
     let mut config = Ini::new();
     let lowercase_output = if config.load("./config.ini").is_ok() {
-        config.getbool("settings", "lowercase_output").unwrap_or(Some(false)).unwrap_or(false)
+        config
+            .getbool("settings", "lowercase_output")
+            .unwrap_or(Some(false))
+            .unwrap_or(false)
     } else {
         false
     };
@@ -51,8 +54,12 @@ pub fn run(text: &str) -> String {
 }
 
 fn check_version(text_major: usize, text_minor: usize) {
-    let program_major = env!("CARGO_PKG_VERSION_MAJOR").parse::<usize>().expect("Error parsing package's major version in Cargo.toml.");
-    let program_minor = env!("CARGO_PKG_VERSION_MINOR").parse::<usize>().expect("Error parsing package's minor version in Cargo.toml.");
+    let program_major = env!("CARGO_PKG_VERSION_MAJOR")
+        .parse::<usize>()
+        .expect("Error parsing package's major version in Cargo.toml.");
+    let program_minor = env!("CARGO_PKG_VERSION_MINOR")
+        .parse::<usize>()
+        .expect("Error parsing package's minor version in Cargo.toml.");
 
     if program_major != text_major || program_minor != text_minor {
         println!();
@@ -66,32 +73,12 @@ fn check_version(text_major: usize, text_minor: usize) {
     }
 }
 
-fn decode_beans (bean: &str) -> usize {
-    let b_hash = HashMap::from([
-        ("b", 0),
-        ("B", 72),
-        ("6", 144),
-    ]);
-    let e_hash = HashMap::from([
-        ("e", 0),
-        ("E", 24),
-        ("3", 48),
-    ]);
-    let a_hash = HashMap::from([
-        ("a", 0),
-        ("A", 8),
-        ("4", 16),
-    ]);
-    let n_hash = HashMap::from([
-        ("n", 0),
-        ("N", 4),
-    ]);
-    let s_hash = HashMap::from([
-        ("s", 0),
-        ("S", 1),
-        ("5", 2),
-        ("", 3),
-    ]);
+fn decode_beans(bean: &str) -> usize {
+    let b_hash = HashMap::from([("b", 0), ("B", 72), ("6", 144)]);
+    let e_hash = HashMap::from([("e", 0), ("E", 24), ("3", 48)]);
+    let a_hash = HashMap::from([("a", 0), ("A", 8), ("4", 16)]);
+    let n_hash = HashMap::from([("n", 0), ("N", 4)]);
+    let s_hash = HashMap::from([("s", 0), ("S", 1), ("5", 2), ("", 3)]);
 
     let mut id = 0;
 
@@ -101,7 +88,7 @@ fn decode_beans (bean: &str) -> usize {
     // yoink first character, convert to string, check against hash and add to id. do this 5 times. is there a better way? probably but i am learning so any sins and felonies can be forgiven
     match chars.next() {
         Some(result) => current_char = result.to_string(),
-        None => current_char = String::new()
+        None => current_char = String::new(),
     }
     if let Some(result) = b_hash.get(&current_char.as_str()) {
         id += result;
@@ -109,7 +96,7 @@ fn decode_beans (bean: &str) -> usize {
 
     match chars.next() {
         Some(result) => current_char = result.to_string(),
-        None => current_char = String::new()
+        None => current_char = String::new(),
     }
     if let Some(result) = e_hash.get(&current_char.as_str()) {
         id += result;
@@ -117,7 +104,7 @@ fn decode_beans (bean: &str) -> usize {
 
     match chars.next() {
         Some(result) => current_char = result.to_string(),
-        None => current_char = String::new()
+        None => current_char = String::new(),
     }
     if let Some(result) = a_hash.get(&current_char.as_str()) {
         id += result;
@@ -125,7 +112,7 @@ fn decode_beans (bean: &str) -> usize {
 
     match chars.next() {
         Some(result) => current_char = result.to_string(),
-        None => current_char = String::new()
+        None => current_char = String::new(),
     }
     if let Some(result) = n_hash.get(&current_char.as_str()) {
         id += result;
@@ -133,12 +120,12 @@ fn decode_beans (bean: &str) -> usize {
 
     match chars.next() {
         Some(result) => current_char = result.to_string(),
-        None => current_char = String::new()
+        None => current_char = String::new(),
     }
     // special case for none because i am figuring out how to make a good system later. it works™
     match s_hash.get(&current_char.as_str()) {
         Some(result) => id += result,
-        None => id += 3
+        None => id += 3,
     }
 
     id

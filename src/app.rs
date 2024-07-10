@@ -1,14 +1,14 @@
 use egui::Rect;
 
-use crate::encode;
 use crate::decode;
+use crate::encode;
 
 #[derive(Default)]
 pub struct BeanCypherApp {
     input: String,
     output: String,
     show_settings: bool,
-    set_lowercase: bool
+    set_lowercase: bool,
 }
 
 impl BeanCypherApp {
@@ -38,7 +38,10 @@ impl eframe::App for BeanCypherApp {
                 ui.horizontal(|ui| {
                     ui.set_height(50.0);
 
-                    ui.add(egui::Image::new(egui::include_image!("../assets/bean.png")).max_width(50.0));
+                    ui.add(
+                        egui::Image::new(egui::include_image!("../assets/bean.png"))
+                            .max_width(50.0),
+                    );
 
                     ui.vertical(|ui| {
                         ui.add_space(5.0);
@@ -49,10 +52,16 @@ impl eframe::App for BeanCypherApp {
                     let set_btn = ui.put(
                         Rect {
                             // there might be a less scuffed way of doing this but hey! it works
-                            min: egui::Pos2 { x: ui.available_width() + 80.0, y: 10.0 },
-                            max: egui::Pos2 { x: ui.available_width() + 170.0, y: 20.0 }
+                            min: egui::Pos2 {
+                                x: ui.available_width() + 80.0,
+                                y: 10.0,
+                            },
+                            max: egui::Pos2 {
+                                x: ui.available_width() + 170.0,
+                                y: 20.0,
+                            },
                         },
-                        egui::Button::new("Open settings")
+                        egui::Button::new("Open settings"),
                     );
                     if set_btn.clicked() {
                         self.show_settings = true
@@ -60,9 +69,14 @@ impl eframe::App for BeanCypherApp {
                 });
 
                 ui.separator();
-                
+
                 egui::ScrollArea::vertical().show(ui, |ui| {
-                    ui.add_sized([ctx.input(|i| i.screen_rect().width() - 15.0), 100.0], egui::TextEdit::multiline(&mut self.input).hint_text("Input goes here...").clip_text(true));
+                    ui.add_sized(
+                        [ctx.input(|i| i.screen_rect().width() - 15.0), 100.0],
+                        egui::TextEdit::multiline(&mut self.input)
+                            .hint_text("Input goes here...")
+                            .clip_text(true),
+                    );
                 });
 
                 ui.horizontal(|ui| {
@@ -78,11 +92,11 @@ impl eframe::App for BeanCypherApp {
                 });
 
                 ui.separator();
-                
+
                 ui.label(self.output.to_string());
-                
+
                 ui.separator();
-                
+
                 if ui.button("Copy to clipboard").clicked() {
                     ctx.copy_text(self.output.clone());
                 }
@@ -93,7 +107,10 @@ impl eframe::App for BeanCypherApp {
             ctx.show_viewport_immediate(
                 egui::ViewportId::from_hash_of("settings"),
                 egui::ViewportBuilder::default()
-                    .with_title(format!("Settings - Bean Cypher v{}-dev", env!("CARGO_PKG_VERSION")))
+                    .with_title(format!(
+                        "Settings - Bean Cypher v{}-dev",
+                        env!("CARGO_PKG_VERSION")
+                    ))
                     .with_maximize_button(false),
                 |ctx, _class| {
                     egui::CentralPanel::default().show(ctx, |ui| {
@@ -104,14 +121,14 @@ impl eframe::App for BeanCypherApp {
 
                         egui::Grid::new("settings_grid").show(ui, |ui| {
                             ui.label("Lowercase output");
-                                ui.checkbox(&mut self.set_lowercase, "")
+                            ui.checkbox(&mut self.set_lowercase, "")
                         });
                     });
 
                     if ctx.input(|i| i.viewport().close_requested()) {
                         self.show_settings = false;
                     }
-                }
+                },
             );
         }
     }

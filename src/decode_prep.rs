@@ -1,5 +1,8 @@
-use std::{fs::File, io::{self, Read}};
 use crate::{decode, decode_prep, notifications::error_message};
+use std::{
+    fs::File,
+    io::{self, Read},
+};
 
 pub fn run() {
     // info_message("we decodin baby! type yer nonsense :3");
@@ -19,7 +22,7 @@ pub fn run_file() {
     io::stdin().read_line(&mut file_name).expect("god damn it");
     file_name.pop();
     file_name.pop();
-    
+
     let file_path = "./".to_owned() + &file_name + ".txt";
     let potential_file = File::open(file_path);
 

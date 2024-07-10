@@ -2,7 +2,10 @@ pub mod hash_conversions {
     use configparser::ini::Ini;
 
     use std::fs::File;
-    use std::{  collections::HashMap, io::{BufRead, BufReader}};
+    use std::{
+        collections::HashMap,
+        io::{BufRead, BufReader},
+    };
 
     #[allow(clippy::too_many_lines)]
     fn get_hash() -> HashMap<usize, String> {
@@ -86,7 +89,7 @@ pub mod hash_conversions {
             (76, "{".to_string()),
             (77, "|".to_string()),
             (78, "}".to_string()),
-            (79, "~".to_string())
+            (79, "~".to_string()),
         ]);
 
         let mut correct_hash: HashMap<usize, String> = HashMap::new();
@@ -94,29 +97,28 @@ pub mod hash_conversions {
         let mut config = Ini::new();
 
         match config.load("./config.ini") {
-            Ok(_) => {
-                match config.get("settings", "cypher") {
-                    Some(result) => {
-                        let chosen_cypher_location = "./cyphers/".to_string() + &result + ".txt";
+            Ok(_) => match config.get("settings", "cypher") {
+                Some(result) => {
+                    let chosen_cypher_location = "./cyphers/".to_string() + &result + ".txt";
 
-                        match File::open(chosen_cypher_location) {
-                            Ok(cypher_file) => {
-                                let buffered = BufReader::new(cypher_file);
+                    match File::open(chosen_cypher_location) {
+                        Ok(cypher_file) => {
+                            let buffered = BufReader::new(cypher_file);
 
-                                for (hash_index, line) in buffered.lines().enumerate() {
-                                    correct_hash.insert(hash_index, line.expect("No line found when reading cypher input."));
-                                }
-                            }
-                            Err(_) => {
-                                correct_hash = string_hash;
+                            for (hash_index, line) in buffered.lines().enumerate() {
+                                correct_hash.insert(
+                                    hash_index,
+                                    line.expect("No line found when reading cypher input."),
+                                );
                             }
                         }
-
-                        
+                        Err(_) => {
+                            correct_hash = string_hash;
+                        }
                     }
-                    None => {
-                        correct_hash = string_hash;
-                    }
+                }
+                None => {
+                    correct_hash = string_hash;
                 }
             },
             Err(_) => {
@@ -128,9 +130,9 @@ pub mod hash_conversions {
 
     pub fn id_to_string(id: usize) -> String {
         let string_hash = get_hash();
-        
+
         if let Some(result) = string_hash.get(&id) {
-            return result.to_string()
+            return result.to_string();
         }
         String::new()
     }
@@ -141,7 +143,7 @@ pub mod hash_conversions {
         let upper_text = text.to_uppercase();
         let mut phrases: Vec<(usize, usize)> = Vec::new();
         let string_hash = get_hash();
-        
+
         // afaik hashmaps pick randomly, we want to start with phrases that have the longest length to have as little bullshit as possible
         let mut string_hash_values = Vec::new();
         for value in string_hash.values() {
@@ -162,7 +164,10 @@ pub mod hash_conversions {
 
                     let difference = previous_text.len() - previous_text.chars().count();
                     let correct_index = result.0 - difference;
-                    phrases.insert(phrases.len(), (correct_index.max(0), string_to_id(result.1)));
+                    phrases.insert(
+                        phrases.len(),
+                        (correct_index.max(0), string_to_id(result.1)),
+                    );
                 }
             }
         }
@@ -174,18 +179,17 @@ pub mod hash_conversions {
         let string_hash = get_hash();
 
         // iterate through values until we find a matching one, pass key (saves editing 2 different hashes)
-        let potential_id = string_hash.iter().find_map(|(key, val)|
-        if val == upper_char {
-            Some(key)
-        } else {
-            None
-        });
+        let potential_id =
+            string_hash
+                .iter()
+                .find_map(|(key, val)| if val == upper_char { Some(key) } else { None });
 
         // check for any unrecognized characters
         if potential_id.is_none() {
             return usize::MAX;
         }
 
-        *potential_id.expect("When converting a string to id, failed to check for unrecognized characters.")
+        *potential_id
+            .expect("When converting a string to id, failed to check for unrecognized characters.")
     }
 }
