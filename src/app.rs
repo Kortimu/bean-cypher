@@ -1,3 +1,5 @@
+use egui::Rect;
+
 use crate::encode;
 use crate::decode;
 
@@ -24,6 +26,7 @@ impl BeanCypherApp {
             },
             ..old_style
         });
+        egui_extras::install_image_loaders(&cc.egui_ctx);
         Self::default()
     }
 }
@@ -32,11 +35,26 @@ impl eframe::App for BeanCypherApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
             egui::ScrollArea::vertical().show(ui, |ui| {
-                ui.columns(2, |columns| {
-                    // columns[0].image("../assets/bean.png");
-                    columns[0].heading("Bean Cypher");
-                    columns[0].label(format!("Alpha v{}-dev", env!("CARGO_PKG_VERSION")));
-                    if columns[1].button("Open Settings").clicked() {
+                ui.horizontal(|ui| {
+                    ui.set_height(50.0);
+
+                    ui.add(egui::Image::new(egui::include_image!("../assets/bean.png")).max_width(50.0));
+
+                    ui.vertical(|ui| {
+                        ui.add_space(5.0);
+                        ui.heading("Bean Cypher");
+                        ui.label(format!("Alpha v{}-dev", env!("CARGO_PKG_VERSION")));
+                    });
+
+                    let set_btn = ui.put(
+                        Rect {
+                            // there might be a less scuffed way of doing this but hey! it works
+                            min: egui::Pos2 { x: ui.available_width() + 80.0, y: 10.0 },
+                            max: egui::Pos2 { x: ui.available_width() + 170.0, y: 20.0 }
+                        },
+                        egui::Button::new("Open settings")
+                    );
+                    if set_btn.clicked() {
                         self.show_settings = true
                     }
                 });
