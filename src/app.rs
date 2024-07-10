@@ -1,3 +1,5 @@
+use std::io::Read;
+
 use crate::decode;
 use crate::encode;
 
@@ -34,8 +36,45 @@ impl eframe::App for BeanCypherApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::TopBottomPanel::top("top").show(ctx, |ui| {
             egui::menu::bar(ui, |ui| {
+                ui.menu_button("File", |ui| {
+                    if ui.button("Encode from file...").clicked() {
+                        let file_path = rfd::FileDialog::new()
+                            .add_filter("text", &["txt"])
+                            .pick_file()
+                            .unwrap();
+
+                        let potential_file = std::fs::File::open(file_path);
+
+                        if potential_file.is_ok() {
+                            let mut file = potential_file.expect("ah fuck");
+                            let mut contents = String::new();
+                            file.read_to_string(&mut contents).expect("ah fuck");
+                            self.output = encode::run(&contents);
+                        } else {
+                            todo!();
+                        }
+                    }
+                    if ui.button("Decode from file...").clicked() {
+                        let file_path = rfd::FileDialog::new()
+                            .add_filter("text", &["txt"])
+                            .pick_file()
+                            .expect("Error with selecting file. Behaviour will be implemented later.");
+
+                        let potential_file = std::fs::File::open(file_path);
+
+                        if potential_file.is_ok() {
+                            let mut file = potential_file.expect("ah fuck");
+                            let mut contents = String::new();
+                            file.read_to_string(&mut contents).expect("ah fuck");
+                            self.output = decode::run(&contents);
+                        } else {
+                            todo!();
+                        }
+                    }
+                });
+
                 if ui.button("Open settings").clicked() {
-                    self.show_settings = true
+                    self.show_settings = true;
                 }
                 // TODO: credits button
             });
@@ -74,7 +113,7 @@ impl eframe::App for BeanCypherApp {
                     }
                     if ui.button("Decode text").clicked() {
                         self.output = decode::run(&self.input);
-                        if self.set_lowercase == true {
+                        if self.set_lowercase {
                             self.output = self.output.to_lowercase();
                         }
                     }
