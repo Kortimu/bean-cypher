@@ -9,6 +9,7 @@ pub struct BeanCypherApp {
     input: String,
     output: String,
     show_settings: bool,
+    show_credits: bool,
     set_lowercase: bool,
     // set_lang: String
 }
@@ -85,10 +86,12 @@ impl eframe::App for BeanCypherApp {
                     }
                 });
 
-                if ui.button("Open settings").clicked() {
+                if ui.button("Settings").clicked() {
                     self.show_settings = true;
                 }
-                // TODO: credits button
+                if ui.button("Credits").clicked() {
+                    self.show_credits = true;
+                }
             });
         });
 
@@ -97,10 +100,7 @@ impl eframe::App for BeanCypherApp {
                 ui.horizontal(|ui| {
                     ui.set_height(50.0);
 
-                    ui.add(
-                        egui::Image::new(egui::include_image!("../assets/bean.png"))
-                            .max_width(50.0),
-                    );
+                    ui.add(egui::Image::new(egui::include_image!("../assets/bean.png")));
                     ui.vertical(|ui| {
                         ui.add_space(5.0);
                         ui.heading("Bean Cypher");
@@ -159,10 +159,7 @@ impl eframe::App for BeanCypherApp {
             ctx.show_viewport_immediate(
                 egui::ViewportId::from_hash_of("settings"),
                 egui::ViewportBuilder::default()
-                    .with_title(format!(
-                        "Settings - Bean Cypher v{}-dev",
-                        env!("CARGO_PKG_VERSION")
-                    ))
+                    .with_title("Settings")
                     .with_maximize_button(false)
                     .with_inner_size([400.0, 200.0]),
                 |ctx, _class| {
@@ -198,6 +195,45 @@ impl eframe::App for BeanCypherApp {
 
                     if ctx.input(|i| i.viewport().close_requested()) {
                         self.show_settings = false;
+                    }
+                },
+            );
+        }
+
+        if self.show_credits {
+            ctx.show_viewport_immediate(
+                egui::ViewportId::from_hash_of("credits"),
+                egui::ViewportBuilder::default()
+                    .with_title("Credits")
+                    .with_maximize_button(false)
+                    .with_inner_size([250.0, 200.0]),
+                |ctx, _class| {
+                    egui::CentralPanel::default().show(ctx, |ui| {
+                        ui.horizontal(|ui| {
+                            ui.set_height(100.0);
+
+                            ui.add(egui::Image::new(egui::include_image!("../assets/bean.png")));
+                            ui.vertical(|ui| {
+                                ui.add_space(30.0);
+                                ui.heading("Bean Cypher");
+                                ui.label(format!("Alpha v{}-dev", env!("CARGO_PKG_VERSION")));
+                            });
+                        });
+
+                        ui.label(format!("Version: {}", env!("CARGO_PKG_VERSION")));
+                        ui.horizontal(|ui| {
+                            ui.label("Creator:");
+                            ui.hyperlink_to("Kortimu", "https://kortimu.github.io");
+                        });
+                        ui.horizontal(|ui| {
+                            ui.label("Chief Bean Officer:");
+                            ui.hyperlink_to("Bean Man", "https://twitch.tv/beandhd");
+                        });
+                        ui.hyperlink_to("Source code", "https://github.com/Kortimu/bean-cypher");
+                    });
+
+                    if ctx.input(|i| i.viewport().close_requested()) {
+                        self.show_credits = false;
                     }
                 },
             );

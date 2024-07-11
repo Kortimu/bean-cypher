@@ -30,7 +30,7 @@ pub fn run(text: &str) -> String {
         let string = id_to_string(id);
         output.insert_str(output.len(), &string);
     }
-    
+
     output
 }
 
