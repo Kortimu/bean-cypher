@@ -4,14 +4,32 @@ use std::io::Read;
 use crate::decode;
 use crate::encode;
 
-#[derive(Default)]
+#[derive(serde::Deserialize, serde::Serialize)]
+#[serde(default)]
 pub struct BeanCypherApp {
+    #[serde(skip)]
     input: String,
+    #[serde(skip)]
     output: String,
+    #[serde(skip)]
     show_settings: bool,
+    #[serde(skip)]
     show_credits: bool,
+
     set_lowercase: bool,
     // set_lang: String
+}
+
+impl Default for BeanCypherApp {
+    fn default() -> Self {
+        Self {
+            input: String::new(),
+            output: String::new(),
+            show_settings: false,
+            show_credits: false,
+            set_lowercase: false,
+        }
+    }
 }
 
 impl BeanCypherApp {
@@ -30,6 +48,11 @@ impl BeanCypherApp {
             ..old_style
         });
         egui_extras::install_image_loaders(&cc.egui_ctx);
+
+        if let Some(storage) = cc.storage {
+            return eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
+        }
+
         Self::default()
     }
 }
@@ -238,5 +261,9 @@ impl eframe::App for BeanCypherApp {
                 },
             );
         }
+    }
+
+    fn save(&mut self, storage: &mut dyn eframe::Storage) {
+        eframe::set_value(storage, eframe::APP_KEY, self);
     }
 }

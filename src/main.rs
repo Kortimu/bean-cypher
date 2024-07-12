@@ -9,6 +9,7 @@ fn main() -> eframe::Result {
                 "Bean Cypher (Alpha v{}-dev)",
                 env!("CARGO_PKG_VERSION")
             )),
+        persist_window: false,
         ..Default::default()
     };
     eframe::run_native(
