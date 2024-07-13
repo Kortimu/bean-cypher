@@ -82,7 +82,7 @@ impl eframe::App for BeanCypher {
                 |ctx, _class| {
                     egui::CentralPanel::default().show(ctx, |ui| {
                         ui.heading("Settings");
-                        ui.label("(The settings don't get saved. FOR NOW!)");
+                        ui.label("(Only theme selection does not get saved.)");
 
                         ui.separator();
 
