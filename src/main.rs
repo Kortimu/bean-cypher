@@ -15,6 +15,6 @@ fn main() -> eframe::Result {
     eframe::run_native(
         "Bean Cypher",
         native_options,
-        Box::new(|cc| Ok(Box::new(bean_cypher::BeanCypherApp::new(cc)))),
+        Box::new(|cc| Ok(Box::new(bean_cypher::BeanCypher::new(cc)))),
     )
 }

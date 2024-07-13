@@ -1,5 +1,5 @@
 mod app;
-pub use app::BeanCypherApp;
+pub use app::BeanCypher;
 
 #[path = "decode.rs"]
 mod decode;
@@ -17,8 +17,7 @@ pub enum ErrorState {
 impl ErrorState {
     fn into_string(self) -> String {
         match self {
-            Self::Warning(s) => s,
-            Self::Error(s) => s,
+            Self::Warning(s) | Self::Error(s) => s,
             Self::None => String::new(),
         }
     }

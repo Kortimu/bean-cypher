@@ -53,8 +53,7 @@ fn check_version(text_major: usize, text_minor: usize) -> Result<String, ErrorSt
         Ok(result) => program_major = result,
         Err(error) => {
             return Err(ErrorState::Error(format!(
-                "{}: Flawed version major value in Cargo.toml.",
-                error
+                "{error}: Flawed version major value in Cargo.toml.",
             )))
         }
     }
@@ -62,8 +61,7 @@ fn check_version(text_major: usize, text_minor: usize) -> Result<String, ErrorSt
         Ok(result) => program_minor = result,
         Err(error) => {
             return Err(ErrorState::Error(format!(
-                "{}: Flawed version major value in Cargo.toml.",
-                error
+                "{error}: Flawed version major value in Cargo.toml.",
             )))
         }
     }
