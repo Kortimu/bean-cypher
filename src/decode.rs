@@ -1,25 +1,36 @@
-use crate::hash_convert::hash_conversions::id_to_string;
+use std::result::Result::Ok;
+
+use crate::{hash_convert::hash_conversions::id_to_string, ErrorState};
 use std::collections::HashMap;
 
-pub fn run(text: &str) -> String {
-    let mut beans = text.split(' ');
+// TODO: learn how to document some of this
+// Ok() returns the output AND warning message (if there are none, an empty string)
+pub fn run(text: &str) -> Result<(String, String), ErrorState> {
+    let trimmed_text = text.trim();
+    let mut beans = trimmed_text.split(' ');
 
-    let mut text_major = 69;
-    let mut text_minor = 69;
+    let text_major: usize;
+    let text_minor: usize;
 
     if let Some(result) = beans.next() {
         text_major = decode_beans(result);
     } else {
-        println!("The given text could not be decoded. WARNING NEEDED");
+        // return Err("Decoding error: Input lacks info.".to_string())
+        return Err(ErrorState::Error(
+            "Decoding error: Input lacks info.".to_string(),
+        ));
     }
     if let Some(result) = beans.next() {
         text_minor = decode_beans(result);
     } else {
-        println!("The given text could not be decoded. WARNING NEEDED");
+        // return Err("Decoding error: Input lacks info.".to_string())
+        return Err(ErrorState::Error(
+            "Decoding error: Input lacks info.".to_string(),
+        ));
     }
 
     // compares this program's version to the version the text was encoded in
-    check_version(text_major, text_minor);
+    let warning_msg = check_version(text_major, text_minor)?;
 
     let mut output = String::new();
 
@@ -31,31 +42,41 @@ pub fn run(text: &str) -> String {
         output.insert_str(output.len(), &string);
     }
 
-    output
+    Ok((output, warning_msg))
 }
 
-fn check_version(text_major: usize, text_minor: usize) {
-    let program_major = env!("CARGO_PKG_VERSION_MAJOR")
-        .parse::<usize>()
-        .expect("Error parsing package's major version in Cargo.toml.");
-    let program_minor = env!("CARGO_PKG_VERSION_MINOR")
-        .parse::<usize>()
-        .expect("Error parsing package's minor version in Cargo.toml.");
+fn check_version(text_major: usize, text_minor: usize) -> Result<String, ErrorState> {
+    let program_major: usize;
+    let program_minor: usize;
+
+    match env!("CARGO_PKG_VERSION_MAJOR").parse() {
+        Ok(result) => program_major = result,
+        Err(error) => {
+            return Err(ErrorState::Error(format!(
+                "{}: Flawed version major value in Cargo.toml.",
+                error
+            )))
+        }
+    }
+    match env!("CARGO_PKG_VERSION_MINOR").parse() {
+        Ok(result) => program_minor = result,
+        Err(error) => {
+            return Err(ErrorState::Error(format!(
+                "{}: Flawed version major value in Cargo.toml.",
+                error
+            )))
+        }
+    }
 
     if program_major != text_major || program_minor != text_minor {
-        println!();
-        println!("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        println!("The text was encoded in a different version of the program. It may get decoded wrongly.");
-        println!("WARNING NEEDED");
-        println!("- - - - - - - - - - - - - - - - - - - -");
-        println!("Text was encoded in v{text_major}.{text_minor}.x");
-        println!("Text is decoded in v{program_major}.{program_minor}.x");
-        println!("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        println!();
+        return Ok(format!("Warning: the text might get decoded wrong due to mismatched versions.\nEncoded in v{text_major}.{text_minor}.x\nDecoded in v{program_major}.{program_minor}.x"));
     }
+
+    Ok(String::new())
 }
 
 fn decode_beans(bean: &str) -> usize {
+    // TODO: check from 1 whole hash, iterate yada yada
     let b_hash = HashMap::from([("b", 0), ("B", 72), ("6", 144)]);
     let e_hash = HashMap::from([("e", 0), ("E", 24), ("3", 48)]);
     let a_hash = HashMap::from([("a", 0), ("A", 8), ("4", 16)]);

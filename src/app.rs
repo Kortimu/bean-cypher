@@ -3,6 +3,7 @@ use std::io::Read;
 
 use crate::decode;
 use crate::encode;
+use crate::ErrorState;
 
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)]
@@ -15,6 +16,8 @@ pub struct BeanCypherApp {
     show_settings: bool,
     #[serde(skip)]
     show_credits: bool,
+    #[serde(skip)]
+    current_error: ErrorState,
 
     set_lowercase: bool,
     // set_lang: String
@@ -27,6 +30,7 @@ impl Default for BeanCypherApp {
             output: String::new(),
             show_settings: false,
             show_credits: false,
+            current_error: ErrorState::None,
             set_lowercase: false,
         }
     }
@@ -63,44 +67,63 @@ impl eframe::App for BeanCypherApp {
             egui::menu::bar(ui, |ui| {
                 ui.menu_button("File", |ui| {
                     if ui.button("Encode from file...").clicked() {
-                        let file_path = rfd::FileDialog::new()
+                        match rfd::FileDialog::new()
                             .add_filter("Text", &["txt"])
                             .pick_file()
-                            .expect(
-                                "Error with selecting file. Behaviour will be implemented later.",
-                            );
+                        {
+                            Some(file_path) => {
+                                let potential_file = std::fs::File::open(file_path);
 
-                        let potential_file = std::fs::File::open(file_path);
-
-                        if potential_file.is_ok() {
-                            let mut file = potential_file.expect("ah fuck");
-                            let mut contents = String::new();
-                            file.read_to_string(&mut contents).expect("ah fuck");
-                            self.output = encode::run(&contents);
-                        } else {
-                            todo!();
+                                if potential_file.is_ok() {
+                                    let mut file = potential_file.expect("ah fuck");
+                                    let mut contents = String::new();
+                                    file.read_to_string(&mut contents).expect("ah fuck");
+                                    self.output = encode::run(&contents);
+                                    self.current_error = ErrorState::None
+                                } else {
+                                    self.current_error = ErrorState::Error(
+                                        "Error: Failed to parse selected file.".to_string(),
+                                    );
+                                }
+                            }
+                            None => {
+                                self.current_error = ErrorState::Error(
+                                    "File error: Failed to select a text file.".to_string(),
+                                );
+                            }
                         }
                     }
                     if ui.button("Decode from file...").clicked() {
-                        let file_path = rfd::FileDialog::new()
+                        match rfd::FileDialog::new()
                             .add_filter("Text", &["txt"])
                             .pick_file()
-                            .expect(
-                                "Error with selecting file. Behaviour will be implemented later.",
-                            );
+                        {
+                            Some(file_path) => {
+                                let potential_file = std::fs::File::open(file_path);
 
-                        let potential_file = std::fs::File::open(file_path);
-
-                        if potential_file.is_ok() {
-                            let mut file = potential_file.expect("ah fuck");
-                            let mut contents = String::new();
-                            file.read_to_string(&mut contents).expect("ah fuck");
-                            self.output = decode::run(&contents);
-                            if self.set_lowercase {
-                                self.output = self.output.to_lowercase();
+                                if potential_file.is_ok() {
+                                    let mut file = potential_file.expect("ah fuck");
+                                    let mut contents = String::new();
+                                    file.read_to_string(&mut contents).expect("ah fuck");
+                                    match decode::run(&contents) {
+                                        Ok(result) => {
+                                            self.output = result.0;
+                                            self.current_error = ErrorState::Warning(result.1);
+                                        }
+                                        Err(error) => self.current_error = error,
+                                    };
+                                    self.current_error = ErrorState::None
+                                } else {
+                                    self.current_error = ErrorState::Error(
+                                        "Error: Failed to parse selected file.".to_string(),
+                                    );
+                                }
                             }
-                        } else {
-                            todo!();
+                            None => {
+                                self.current_error = ErrorState::Error(
+                                    "File error: Failed to select a text file.".to_string(),
+                                );
+                            }
                         }
                     }
                     // reminder: this will probably be only on windows
@@ -129,6 +152,20 @@ impl eframe::App for BeanCypherApp {
                         ui.heading("Bean Cypher");
                         ui.label(format!("Alpha v{}-dev", env!("CARGO_PKG_VERSION")));
                     });
+
+                    egui::Frame::none()
+                        .fill(match self.current_error {
+                            ErrorState::Error(_) => egui::Color32::from_hex("#ff000020")
+                                .expect("Error: Faulty hex code value for warning."),
+                            ErrorState::Warning(_) => egui::Color32::from_hex("#ffff0020")
+                                .expect("Error: Faulty hex code value for warning."),
+                            ErrorState::None => egui::Color32::from_hex("#0000")
+                                .expect("Error: Faulty hex code value for warning."),
+                        })
+                        .show(ui, |ui| {
+                            ui.set_width(ui.available_width());
+                            ui.label(self.current_error.clone().into_string());
+                        });
                 });
 
                 ui.separator();
@@ -145,9 +182,20 @@ impl eframe::App for BeanCypherApp {
                 ui.horizontal(|ui| {
                     if ui.button("Encode text").clicked() {
                         self.output = encode::run(&self.input);
+                        self.current_error = ErrorState::None;
                     }
                     if ui.button("Decode text").clicked() {
-                        self.output = decode::run(&self.input);
+                        match decode::run(&self.input) {
+                            Ok(result) => {
+                                self.output = result.0;
+                                if result.1.len() > 0 {
+                                    self.current_error = ErrorState::Warning(result.1);
+                                } else {
+                                    self.current_error = ErrorState::None;
+                                }
+                            }
+                            Err(error) => self.current_error = error,
+                        };
                         if self.set_lowercase {
                             self.output = self.output.to_lowercase();
                         }
