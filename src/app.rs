@@ -144,7 +144,7 @@ impl eframe::App for BeanCypherApp {
         egui::CentralPanel::default().show(ctx, |ui| {
             egui::ScrollArea::vertical().show(ui, |ui| {
                 ui.horizontal(|ui| {
-                    ui.set_height(50.0);
+                    ui.set_height(55.0);
 
                     ui.add(egui::Image::new(egui::include_image!("../assets/bean.png")));
                     ui.vertical(|ui| {
@@ -155,16 +155,70 @@ impl eframe::App for BeanCypherApp {
 
                     egui::Frame::none()
                         .fill(match self.current_error {
-                            ErrorState::Error(_) => egui::Color32::from_hex("#ff000020")
+                            ErrorState::Error(_) => egui::Color32::from_hex("#cf103190")
                                 .expect("Error: Faulty hex code value for warning."),
-                            ErrorState::Warning(_) => egui::Color32::from_hex("#ffff0020")
+                            ErrorState::Warning(_) => egui::Color32::from_hex("#d0b010")
                                 .expect("Error: Faulty hex code value for warning."),
                             ErrorState::None => egui::Color32::from_hex("#0000")
                                 .expect("Error: Faulty hex code value for warning."),
                         })
+                        .rounding(egui::Rounding {
+                            nw: 5.0,
+                            ne: 5.0,
+                            sw: 5.0,
+                            se: 5.0,
+                        })
+                        .inner_margin(egui::Margin {
+                            left: 10.0,
+                            top: 5.0,
+                            bottom: 5.0,
+                            right: 10.0,
+                        })
                         .show(ui, |ui| {
                             ui.set_width(ui.available_width());
-                            ui.label(self.current_error.clone().into_string());
+                            ui.scope(|ui| {
+                                if ui.style().visuals.dark_mode {
+                                    match self.current_error {
+                                        ErrorState::Error(_) => {
+                                            ui.style_mut().visuals.override_text_color =
+                                                Some(egui::Color32::from_hex("#dfdfdf").expect(
+                                                    "Error: Faulty hex code value for warning.",
+                                                ));
+                                        }
+                                        ErrorState::Warning(_) => {
+                                            ui.style_mut().visuals.override_text_color =
+                                                Some(egui::Color32::from_hex("#303030").expect(
+                                                    "Error: Faulty hex code value for warning.",
+                                                ));
+                                        }
+                                        ErrorState::None => (),
+                                    }
+                                }
+
+                                match self.current_error {
+                                    ErrorState::Error(_) => ui.add(
+                                        egui::Image::new(egui::include_image!(
+                                            "../assets/error.png"
+                                        ))
+                                        .max_height(30.0),
+                                    ),
+                                    ErrorState::Warning(_) => ui.add(
+                                        egui::Image::new(egui::include_image!(
+                                            "../assets/warning.png"
+                                        ))
+                                        .max_height(30.0),
+                                    ),
+                                    // FIXME: janky fucked up workaround that i'd prefer not exist
+                                    ErrorState::None => ui.add(
+                                        egui::Image::new(egui::include_image!(
+                                            "../assets/error.png"
+                                        ))
+                                        .max_height(0.0),
+                                    ),
+                                };
+
+                                ui.label(self.current_error.clone().into_string());
+                            });
                         });
                 });
 
