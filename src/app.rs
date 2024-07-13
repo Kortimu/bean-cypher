@@ -191,6 +191,7 @@ fn display_menu_bar(app: &mut BeanCypher, ui: &mut egui::Ui) {
                         );
                     }
                 }
+                ui.close_menu();
             }
             if ui.button("Decode from file...").clicked() {
                 match rfd::FileDialog::new()
@@ -224,6 +225,7 @@ fn display_menu_bar(app: &mut BeanCypher, ui: &mut egui::Ui) {
                         );
                     }
                 }
+                ui.close_menu();
             }
             // reminder: this will probably be only on windows
             if ui.button("Quit").clicked() {
