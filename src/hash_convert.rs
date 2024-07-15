@@ -97,7 +97,11 @@ pub mod hash_conversions {
         let mut file_hash = HashMap::new();
 
         std::fs::File::open(file_path).map_or_else(
-            |_| Err(ErrorState::Error("File error: Failed to select a text file.".to_string())),
+            |_| {
+                Err(ErrorState::Error(
+                    "File error: Failed to select a text file.".to_string(),
+                ))
+            },
             |cypher_file| {
                 let buffered = BufReader::new(cypher_file);
                 for (hash_index, line) in buffered.lines().enumerate() {
@@ -168,5 +172,44 @@ pub mod hash_conversions {
 
         *potential_id
             .expect("When converting a string to id, failed to check for unrecognized characters.")
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::collections::HashMap;
+
+    use crate::hash_convert::hash_conversions::find_phrases;
+
+    #[test]
+    fn phrase_order() {
+        let test_hash = HashMap::from([
+            (0, "MUŠAS".to_string()),
+            (1, "ŠAS".to_string()),
+            (2, "BICYCLE".to_string()),
+            (3, "CYCLE".to_string()),
+            (4, "ŠAURSLIEŽU DZELZCEĻŠ :DD!!!@".to_string()),
+            (5, "ŠAURSLIEŽU".to_string()),
+            (6, "DZELZCEĻŠ".to_string()),
+            (7, "CEĻŠ".to_string()),
+            (8, ":D".to_string()),
+            (9, "!!!".to_string()),
+        ]);
+
+        assert_eq!(
+            find_phrases("mušasbicyclešaursliežu dzelzceļš :DD!!!@", &test_hash),
+            Vec::from([
+                (12, 4),
+                (12, 5),
+                (23, 6),
+                (5, 2),
+                (0, 0),
+                (7, 3),
+                (28, 7),
+                (36, 9),
+                (2, 1),
+                (33, 8)
+            ])
+        )
     }
 }
