@@ -132,7 +132,7 @@ pub mod hash_conversions {
         for value in hash.values() {
             string_hash_values.insert(string_hash_values.len(), value);
         }
-        string_hash_values.sort_by_key(|k| k.len());
+        string_hash_values.sort_by_key(|k| k.chars().count());
         string_hash_values.reverse();
 
         for string in string_hash_values {
