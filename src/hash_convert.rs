@@ -112,8 +112,6 @@ pub mod hash_conversions {
     }
 
     pub fn id_to_string(id: usize, hash: &HashMap<usize, String>) -> String {
-        // let string_hash = get_hash();
-
         if let Some(result) = hash.get(&id) {
             return result.to_string();
         }
@@ -158,7 +156,6 @@ pub mod hash_conversions {
 
     pub fn string_to_id(string: &str, hash: &HashMap<usize, String>) -> usize {
         let upper_char = &string.to_uppercase();
-        // let string_hash = get_hash();
 
         // iterate through values until we find a matching one, pass key (saves editing 2 different hashes)
         let potential_id = hash
