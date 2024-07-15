@@ -1,12 +1,16 @@
+use std::collections::HashMap;
 use std::fs;
 use std::io::Read;
 
 use crate::decode;
 use crate::encode;
+use crate::hash_convert;
+use crate::hash_convert::hash_conversions::get_default_hash;
 use crate::ErrorState;
 
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)]
+#[allow(clippy::struct_excessive_bools)]
 pub struct BeanCypher {
     #[serde(skip)]
     input: String,
@@ -20,7 +24,8 @@ pub struct BeanCypher {
     current_error: ErrorState,
 
     set_lowercase: bool,
-    // set_lang: String
+    set_custom_cypher: bool,
+    set_cypher: (String, HashMap<usize, String>), // set_lang: String
 }
 
 impl Default for BeanCypher {
@@ -31,7 +36,13 @@ impl Default for BeanCypher {
             show_settings: false,
             show_credits: false,
             current_error: ErrorState::None,
+
             set_lowercase: false,
+            set_custom_cypher: false,
+            set_cypher: (
+                "default :]".to_string(),
+                hash_convert::hash_conversions::get_default_hash(),
+            ),
         }
     }
 }
@@ -73,48 +84,7 @@ impl eframe::App for BeanCypher {
         });
 
         if self.show_settings {
-            ctx.show_viewport_immediate(
-                egui::ViewportId::from_hash_of("settings"),
-                egui::ViewportBuilder::default()
-                    .with_title("Settings")
-                    .with_maximize_button(false)
-                    .with_inner_size([400.0, 200.0]),
-                |ctx, _class| {
-                    egui::CentralPanel::default().show(ctx, |ui| {
-                        ui.heading("Settings");
-                        ui.label("(Only theme selection does not get saved.)");
-
-                        ui.separator();
-
-                        egui::Grid::new("settings_grid")
-                            .striped(true)
-                            .show(ui, |ui| {
-                                ui.label("Theme");
-                                egui::global_dark_light_mode_buttons(ui);
-                                ui.end_row();
-
-                                ui.label("Lowercase output");
-                                ui.checkbox(&mut self.set_lowercase, "");
-                                ui.end_row();
-
-                                // just did some testing, leaving here for later
-
-                                // ui.label("Language");
-                                // egui::ComboBox::from_label("Pick a language :]")
-                                //     .selected_text(format!("{:?}", self.set_lang))
-                                //     .show_ui(ui, |ui| {
-                                //         ui.selectable_value(&mut self.set_lang, String::from("English"), "English (default)");
-                                //         ui.selectable_value(&mut self.set_lang, String::from("Latvian"), "Latvian");
-                                //     }
-                                // );
-                            });
-                    });
-
-                    if ctx.input(|i| i.viewport().close_requested()) {
-                        self.show_settings = false;
-                    }
-                },
-            );
+            display_settings_window(self, ctx);
         }
 
         if self.show_credits {
@@ -177,7 +147,7 @@ fn display_menu_bar(app: &mut BeanCypher, ui: &mut egui::Ui) {
                             let mut file = potential_file.expect("ah fuck");
                             let mut contents = String::new();
                             file.read_to_string(&mut contents).expect("ah fuck");
-                            app.output = encode::run(&contents);
+                            app.output = encode::run(&contents, &get_hash(app));
                             app.current_error = ErrorState::None;
                         } else {
                             app.current_error = ErrorState::Error(
@@ -205,7 +175,7 @@ fn display_menu_bar(app: &mut BeanCypher, ui: &mut egui::Ui) {
                             let mut file = potential_file.expect("ah fuck");
                             let mut contents = String::new();
                             file.read_to_string(&mut contents).expect("ah fuck");
-                            match decode::run(&contents) {
+                            match decode::run(&contents, &get_hash(app)) {
                                 Ok(result) => {
                                     app.output = result.0;
                                     app.current_error = ErrorState::Warning(result.1);
@@ -270,11 +240,11 @@ fn display_central_panel(app: &mut BeanCypher, ctx: &egui::Context, ui: &mut egu
 
         ui.horizontal(|ui| {
             if ui.button("Encode text").clicked() {
-                app.output = encode::run(&app.input);
+                app.output = encode::run(&app.input, &get_hash(app));
                 app.current_error = ErrorState::None;
             }
             if ui.button("Decode text").clicked() {
-                match decode::run(&app.input) {
+                match decode::run(&app.input, &get_hash(app)) {
                     Ok(result) => {
                         app.output = result.0;
                         if result.1.is_empty() {
@@ -378,4 +348,92 @@ fn display_info_bar(app: &BeanCypher, ui: &mut egui::Ui) {
                 ui.label(app.current_error.clone().into_string());
             });
         });
+}
+
+fn display_settings_window(app: &mut BeanCypher, ctx: &egui::Context) {
+    ctx.show_viewport_immediate(
+        egui::ViewportId::from_hash_of("settings"),
+        egui::ViewportBuilder::default()
+            .with_title("Settings")
+            .with_maximize_button(false)
+            .with_inner_size([400.0, 200.0]),
+        |ctx, _class| {
+            egui::CentralPanel::default().show(ctx, |ui| {
+                ui.heading("Settings");
+                ui.label("(Only theme selection does not get saved.)");
+
+                ui.separator();
+
+                egui::Grid::new("settings_grid")
+                    .striped(true)
+                    .show(ui, |ui| {
+                        ui.label("Theme");
+                        egui::global_dark_light_mode_buttons(ui);
+                        ui.end_row();
+
+                        ui.label("Lowercase output");
+                        ui.checkbox(&mut app.set_lowercase, "");
+                        ui.end_row();
+
+                        ui.label("Enable custom cypher");
+                        ui.checkbox(&mut app.set_custom_cypher, "");
+                        ui.end_row();
+
+                        ui.label("Custom cypher");
+                        if ui.button("Import from text file...").clicked() {
+                            match rfd::FileDialog::new()
+                                .add_filter("Text", &["txt"])
+                                .pick_file()
+                            {
+                                Some(file_path) => {
+                                    app.set_cypher.0 = file_path
+                                        .file_name()
+                                        .unwrap_or_else(|| std::ffi::OsStr::new("Name unknown."))
+                                        .to_str()
+                                        .unwrap_or("Name unknown.")
+                                        .to_string();
+                                    match hash_convert::hash_conversions::file_to_hash(file_path) {
+                                        Ok(result) => {
+                                            app.set_cypher.1 = result;
+                                            app.current_error = ErrorState::None;
+                                        }
+                                        Err(error) => app.current_error = error,
+                                    }
+                                    app.current_error = ErrorState::None;
+                                }
+                                None => {
+                                    app.current_error = ErrorState::Error(
+                                        "Importing error: Faulty file location.".to_string(),
+                                    );
+                                }
+                            }
+                        }
+                        ui.label(app.set_cypher.0.clone());
+
+                        // just did some testing, leaving here for later
+
+                        // ui.label("Language");
+                        // egui::ComboBox::from_label("Pick a language :]")
+                        //     .selected_text(format!("{:?}", self.set_lang))
+                        //     .show_ui(ui, |ui| {
+                        //         ui.selectable_value(&mut self.set_lang, String::from("English"), "English (default)");
+                        //         ui.selectable_value(&mut self.set_lang, String::from("Latvian"), "Latvian");
+                        //     }
+                        // );
+                    });
+            });
+
+            if ctx.input(|i| i.viewport().close_requested()) {
+                app.show_settings = false;
+            }
+        },
+    );
+}
+
+fn get_hash(app: &BeanCypher) -> HashMap<usize, String> {
+    if app.set_custom_cypher {
+        app.set_cypher.1.clone()
+    } else {
+        get_default_hash()
+    }
 }

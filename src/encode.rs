@@ -1,14 +1,15 @@
 use crate::hash_convert::hash_conversions::{find_phrases, id_to_string, string_to_id};
 use std::collections::HashMap;
 
-pub fn run(text: &str) -> String {
+pub fn run(text: &str, hash: &HashMap<usize, String>) -> String {
     let mut ids = Vec::new();
 
-    let phrases = find_phrases(text);
+    let phrases = find_phrases(text, hash);
 
     // convert each character to an id
+    // YES, THIS MEANS FOR ANY PHRASE TO WORK, ALL OF ITS CHARACTERS NEED TO BE IN THE CYPHER!
     for char in text.chars() {
-        let id = string_to_id(&char.to_string());
+        let id = string_to_id(&char.to_string(), hash);
         ids.insert(ids.len(), id);
     }
 
@@ -16,7 +17,7 @@ pub fn run(text: &str) -> String {
     for phrase in phrases {
         let index = phrase.0;
         let id = phrase.1;
-        let length = id_to_string(id).chars().count();
+        let length = id_to_string(id, hash).chars().count();
 
         // -1 is already filtered, gotta avoid filtering twice my god that would suck
         let mut taken = false;

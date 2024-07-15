@@ -5,7 +5,7 @@ use std::collections::HashMap;
 
 // TODO: learn how to document some of this
 // Ok() returns the output AND warning message (if there are none, an empty string)
-pub fn run(text: &str) -> Result<(String, String), ErrorState> {
+pub fn run(text: &str, hash: &HashMap<usize, String>) -> Result<(String, String), ErrorState> {
     let trimmed_text = text.trim();
     let mut beans = trimmed_text.split(' ');
 
@@ -15,7 +15,6 @@ pub fn run(text: &str) -> Result<(String, String), ErrorState> {
     if let Some(result) = beans.next() {
         text_major = decode_beans(result);
     } else {
-        // return Err("Decoding error: Input lacks info.".to_string())
         return Err(ErrorState::Error(
             "Decoding error: Input lacks info.".to_string(),
         ));
@@ -23,7 +22,6 @@ pub fn run(text: &str) -> Result<(String, String), ErrorState> {
     if let Some(result) = beans.next() {
         text_minor = decode_beans(result);
     } else {
-        // return Err("Decoding error: Input lacks info.".to_string())
         return Err(ErrorState::Error(
             "Decoding error: Input lacks info.".to_string(),
         ));
@@ -38,7 +36,7 @@ pub fn run(text: &str) -> Result<(String, String), ErrorState> {
         let id = decode_beans(bean);
 
         // convert each id to what it means
-        let string = id_to_string(id);
+        let string = id_to_string(id, hash);
         output.insert_str(output.len(), &string);
     }
 
