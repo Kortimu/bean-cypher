@@ -118,8 +118,7 @@ pub mod hash_conversions {
         String::new()
     }
 
-    // TODO: prioritize longer length strings
-    // TODO: also can we try not nesting this much thanks
+    // TODO: can we try not nesting this much thanks
     pub fn find_phrases(text: &str, hash: &HashMap<usize, String>) -> Vec<(usize, usize)> {
         let upper_text = text.to_uppercase();
         let mut phrases: Vec<(usize, usize)> = Vec::new();
