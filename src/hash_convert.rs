@@ -128,6 +128,7 @@ pub mod hash_conversions {
         let mut phrases: Vec<(usize, usize)> = Vec::new();
 
         // afaik hashmaps pick randomly, we want to start with phrases that have the longest length to have as little bullshit as possible
+        // (same length phrases get ordered randomly)
         let mut string_hash_values = Vec::new();
         for value in hash.values() {
             string_hash_values.insert(string_hash_values.len(), value);
@@ -184,31 +185,30 @@ mod tests {
     #[test]
     fn phrase_order() {
         let test_hash = HashMap::from([
-            (0, "MUŠAS".to_string()),
-            (1, "ŠAS".to_string()),
-            (2, "BICYCLE".to_string()),
-            (3, "CYCLE".to_string()),
-            (4, "ŠAURSLIEŽU DZELZCEĻŠ :DD!!!@".to_string()),
-            (5, "ŠAURSLIEŽU".to_string()),
-            (6, "DZELZCEĻŠ".to_string()),
-            (7, "CEĻŠ".to_string()),
-            (8, ":D".to_string()),
-            (9, "!!!".to_string()),
+            (0, "Š".to_string()),
+            (1, ":D".to_string()),
+            (2, "ICY".to_string()),
+            (3, "MUŠA".to_string()),
+            (4, "CYCLE".to_string()),
+            (5, "BICYCLE".to_string()),
+            (6, "DZELZCEĻ".to_string()),
+            (7, "DZELZCEĻŠ".to_string()),
+            (8, "ŠAURSLIEŽU".to_string()),
+            (9, "ŠAURSLIEŽU DZELZCEĻŠ :DD!!!@".to_string()),
         ]);
 
         assert_eq!(
             find_phrases("mušasbicyclešaursliežu dzelzceļš :DD!!!@", &test_hash),
             Vec::from([
-                (12, 4),
-                (12, 5),
+                (12, 9),
+                (12, 8),
+                (23, 7),
                 (23, 6),
-                (5, 2),
-                (0, 0),
-                (7, 3),
-                (28, 7),
-                (36, 9),
-                (2, 1),
-                (33, 8)
+                (5, 5),
+                (7, 4),
+                (0, 3),
+                (6, 2),
+                (33, 1)
             ])
         );
     }
