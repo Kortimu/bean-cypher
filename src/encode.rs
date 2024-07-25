@@ -112,7 +112,7 @@ mod tests {
             "0123456789 aābcčdeēfgģhiījkķlļmnņopqrsštuūvwxyzž!'#$%&\"()*+,-./:;<=>?@[\\]^_`{|}~",
             &get_default_hash(),
         );
-        let mut encoded_beans: Vec<&str> = encoded_result.split(" ").collect();
+        let mut encoded_beans: Vec<&str> = encoded_result.split(' ').collect();
 
         // gotta remove the first 2 beans so this test does not need to be updated between versions
         encoded_beans.remove(0);
