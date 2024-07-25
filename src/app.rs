@@ -93,7 +93,7 @@ impl eframe::App for BeanCypher {
                 egui::ViewportBuilder::default()
                     .with_title("Credits")
                     .with_maximize_button(false)
-                    .with_inner_size([250.0, 200.0]),
+                    .with_inner_size([350.0, 500.0]),
                 |ctx, _class| {
                     egui::CentralPanel::default().show(ctx, |ui| {
                         ui.horizontal(|ui| {
@@ -116,7 +116,18 @@ impl eframe::App for BeanCypher {
                             ui.label("Chief Bean Officer:");
                             ui.hyperlink_to("Bean Man", "https://twitch.tv/beandhd");
                         });
+                        ui.horizontal(|ui| {
+                            ui.label("Kortimu's favourite radio station:");
+                            ui.hyperlink_to("Gensokyo Radio :]", "https://gensokyoradio.net");
+                        });
+                        ui.add_space(5.0);
+                        ui.label("Current sanity levels:  Not that much");
+                        ui.add_space(10.0);
                         ui.hyperlink_to("Source code", "https://github.com/Kortimu/bean-cypher");
+                        ui.hyperlink_to("Website", "https://kortimu.github.io/bean-cypher");
+                        ui.add_space(10.0);
+                        ui.label("funny image:");
+                        ui.image(egui::include_image!("../assets/funny_image.png"));
                     });
 
                     if ctx.input(|i| i.viewport().close_requested()) {
