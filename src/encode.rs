@@ -109,7 +109,7 @@ mod tests {
     #[test]
     fn encoding() {
         let encoded_result = run(
-            "0123456789 aābcčdeēfgģhiījkķlļmnņopqrsštuūvwxyzž!\'#$%&\"()*+,-./:;<=>?@[\\]^_`{|}~",
+            "0123456789 aābcčdeēfgģhiījkķlļmnņopqrsštuūvwxyzž!'#$%&\"()*+,-./:;<=>?@[\\]^_`{|}~",
             &get_default_hash(),
         );
         let mut encoded_beans: Vec<&str> = encoded_result.split(" ").collect();

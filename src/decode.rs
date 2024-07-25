@@ -141,7 +141,7 @@ mod tests {
         let decoded_result = run("beans beans beans beanS bean5 bean beaNs beaNS beaN5 beaN beAns beAnS beAn5 beAn beANs beANS beAN5 beAN be4ns be4nS be4n5 be4n be4Ns be4NS be4N5 be4N bEans bEanS bEan5 bEan bEaNs bEaNS bEaN5 bEaN bEAns bEAnS bEAn5 bEAn bEANs bEANS bEAN5 bEAN bE4ns bE4nS bE4n5 bE4n bE4Ns bE4NS bE4N5 bE4N b3ans b3anS b3an5 b3an b3aNs b3aNS b3aN5 b3aN b3Ans b3AnS b3An5 b3An b3ANs b3ANS b3AN5 b3AN b34ns b34nS b34n5 b34n b34Ns b34NS b34N5 b34N Beans BeanS Bean5 Bean BeaNs BeaNS BeaN5 BeaN", &get_default_hash());
 
         let correct_result = String::from(
-            "0123456789 AĀBCČDEĒFGĢHIĪJKĶLĻMNŅOPQRSŠTUŪVWXYZŽ!\'#$%&\"()*+,-./:;<=>?@[\\]^_`{|}~",
+            "0123456789 AĀBCČDEĒFGĢHIĪJKĶLĻMNŅOPQRSŠTUŪVWXYZŽ!'#$%&\"()*+,-./:;<=>?@[\\]^_`{|}~",
         );
 
         assert_eq!(

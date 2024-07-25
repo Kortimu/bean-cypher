@@ -57,7 +57,7 @@ pub mod hash_conversions {
             (46, "Z".to_string()),
             (47, "Ž".to_string()),
             (48, "!".to_string()),
-            (49, "\'".to_string()),
+            (49, "'".to_string()),
             (50, "#".to_string()),
             (51, "$".to_string()),
             (52, "%".to_string()),
