@@ -187,7 +187,6 @@ pub mod hash_conversions {
         }
         Some(())
     }
-
 }
 
 #[cfg(test)]
