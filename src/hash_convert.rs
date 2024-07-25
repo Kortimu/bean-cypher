@@ -174,6 +174,20 @@ pub mod hash_conversions {
         *potential_id
             .expect("When converting a string to id, failed to check for unrecognized characters.")
     }
+
+    pub fn validate_cypher(cypher: &HashMap<usize, String>) -> Option<()> {
+        for string in cypher.values() {
+            if string.chars().count() > 1 {
+                for char in string.chars() {
+                    if !cypher.contains_key(&string_to_id(&char.to_string(), cypher)) {
+                        return None;
+                    }
+                }
+            }
+        }
+        Some(())
+    }
+
 }
 
 #[cfg(test)]

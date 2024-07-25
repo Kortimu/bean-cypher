@@ -386,20 +386,29 @@ fn display_settings_window(app: &mut BeanCypher, ctx: &egui::Context) {
                                 .pick_file()
                             {
                                 Some(file_path) => {
-                                    app.set_cypher.0 = file_path
-                                        .file_name()
-                                        .unwrap_or_else(|| std::ffi::OsStr::new("Name unknown."))
-                                        .to_str()
-                                        .unwrap_or("Name unknown.")
-                                        .to_string();
+                                    // FIXME: janky workaround i think? probably some cleverer way to do this but listen man it's late already
+                                    let path = file_path.clone();
                                     match hash_convert::hash_conversions::file_to_hash(file_path) {
                                         Ok(result) => {
-                                            app.set_cypher.1 = result;
-                                            app.current_error = ErrorState::None;
+                                            match hash_convert::hash_conversions::validate_cypher(&result) {
+                                                Some(()) => {
+                                                    app.set_cypher.0 = path
+                                                        .file_name()
+                                                        .unwrap_or_else(|| std::ffi::OsStr::new("Name unknown."))
+                                                        .to_str()
+                                                        .unwrap_or("Name unknown.")
+                                                        .to_string();
+
+                                                    app.set_cypher.1 = result;
+                                                    app.current_error = ErrorState::None;
+                                                },
+                                                None => {
+                                                    app.current_error = ErrorState::Error("Cypher error: Cypher doesn't contain every character as a separate ID".to_string());
+                                                }
+                                            }
                                         }
                                         Err(error) => app.current_error = error,
                                     }
-                                    app.current_error = ErrorState::None;
                                 }
                                 None => {
                                     app.current_error = ErrorState::Error(
