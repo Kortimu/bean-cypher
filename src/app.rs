@@ -7,6 +7,7 @@ use crate::encode;
 use crate::hash_convert;
 use crate::hash_convert::hash_conversions::get_default_hash;
 use crate::ErrorState;
+use crate::Language;
 
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)]
@@ -25,7 +26,10 @@ pub struct BeanCypher {
 
     set_lowercase: bool,
     set_custom_cypher: bool,
-    set_cypher: (String, HashMap<usize, String>), // set_lang: String
+    set_cypher: (String, HashMap<usize, String>),
+    #[serde(skip)]
+    set_silly: bool,
+    set_language: Language,
 }
 
 impl Default for BeanCypher {
@@ -43,6 +47,8 @@ impl Default for BeanCypher {
                 "default :]".to_string(),
                 hash_convert::hash_conversions::get_default_hash(),
             ),
+            set_silly: false,
+            set_language: Language::English,
         }
     }
 }
@@ -91,7 +97,7 @@ impl eframe::App for BeanCypher {
             ctx.show_viewport_immediate(
                 egui::ViewportId::from_hash_of("credits"),
                 egui::ViewportBuilder::default()
-                    .with_title("Credits")
+                    .with_title(self.set_language.get_string("menu_credits"))
                     .with_maximize_button(false)
                     .with_inner_size([350.0, 500.0]),
                 |ctx, _class| {
@@ -102,31 +108,47 @@ impl eframe::App for BeanCypher {
                             ui.add(egui::Image::new(egui::include_image!("../assets/bean.png")));
                             ui.vertical(|ui| {
                                 ui.add_space(30.0);
-                                ui.heading("Bean Cypher");
+                                ui.heading(self.set_language.get_string("app_name"));
                                 ui.label(format!("Alpha v{}-dev", env!("CARGO_PKG_VERSION")));
                             });
                         });
 
-                        ui.label(format!("Version: {}", env!("CARGO_PKG_VERSION")));
+                        ui.label(format!(
+                            "{}: {}",
+                            self.set_language.get_string("cred_version"),
+                            env!("CARGO_PKG_VERSION")
+                        ));
                         ui.horizontal(|ui| {
-                            ui.label("Creator:");
+                            ui.label(format!("{}:", self.set_language.get_string("cred_creator")));
                             ui.hyperlink_to("Kortimu", "https://kortimu.github.io");
                         });
                         ui.horizontal(|ui| {
-                            ui.label("Chief Bean Officer:");
+                            ui.label(format!("{}:", self.set_language.get_string("cred_cbo")));
                             ui.hyperlink_to("Bean Man", "https://twitch.tv/beandhd");
                         });
                         ui.horizontal(|ui| {
-                            ui.label("Kortimu's favourite radio station:");
+                            ui.label(format!(
+                                "{}:",
+                                self.set_language.get_string("cred_fav_station")
+                            ));
                             ui.hyperlink_to("Gensokyo Radio :]", "https://gensokyoradio.net");
                         });
                         ui.add_space(5.0);
-                        ui.label("Current sanity levels:  Not that much");
+                        ui.label(self.set_language.get_string("cred_sanity"));
                         ui.add_space(10.0);
-                        ui.hyperlink_to("Source code", "https://github.com/Kortimu/bean-cypher");
-                        ui.hyperlink_to("Website", "https://kortimu.github.io/bean-cypher");
+                        ui.hyperlink_to(
+                            self.set_language.get_string("cred_source"),
+                            "https://github.com/Kortimu/bean-cypher",
+                        );
+                        ui.hyperlink_to(
+                            self.set_language.get_string("cred_website"),
+                            "https://kortimu.github.io/bean-cypher",
+                        );
                         ui.add_space(10.0);
-                        ui.label("funny image:");
+                        ui.label(format!(
+                            "{}:",
+                            self.set_language.get_string("cred_funny_img")
+                        ));
                         ui.image(egui::include_image!("../assets/funny_image.png"));
                     });
 
@@ -145,10 +167,13 @@ impl eframe::App for BeanCypher {
 
 fn display_menu_bar(app: &mut BeanCypher, ui: &mut egui::Ui) {
     egui::menu::bar(ui, |ui| {
-        ui.menu_button("File", |ui| {
-            if ui.button("Encode from file...").clicked() {
+        ui.menu_button(app.set_language.get_string("menu_file"), |ui| {
+            if ui
+                .button(app.set_language.get_string("menu_file_encode"))
+                .clicked()
+            {
                 match rfd::FileDialog::new()
-                    .add_filter("Text", &["txt"])
+                    .add_filter(app.set_language.get_string("text"), &["txt"])
                     .pick_file()
                 {
                     Some(file_path) => {
@@ -174,9 +199,12 @@ fn display_menu_bar(app: &mut BeanCypher, ui: &mut egui::Ui) {
                 }
                 ui.close_menu();
             }
-            if ui.button("Decode from file...").clicked() {
+            if ui
+                .button(app.set_language.get_string("menu_file_decode"))
+                .clicked()
+            {
                 match rfd::FileDialog::new()
-                    .add_filter("Text", &["txt"])
+                    .add_filter(app.set_language.get_string("text"), &["txt"])
                     .pick_file()
                 {
                     Some(file_path) => {
@@ -209,15 +237,24 @@ fn display_menu_bar(app: &mut BeanCypher, ui: &mut egui::Ui) {
                 ui.close_menu();
             }
             // reminder: this will probably be only on windows
-            if ui.button("Quit").clicked() {
+            if ui
+                .button(app.set_language.get_string("menu_file_quit"))
+                .clicked()
+            {
                 std::process::exit(0);
             }
         });
 
-        if ui.button("Settings").clicked() {
+        if ui
+            .button(app.set_language.get_string("menu_settings"))
+            .clicked()
+        {
             app.show_settings = true;
         }
-        if ui.button("Credits").clicked() {
+        if ui
+            .button(app.set_language.get_string("menu_credits"))
+            .clicked()
+        {
             app.show_credits = true;
         }
     });
@@ -231,7 +268,7 @@ fn display_central_panel(app: &mut BeanCypher, ctx: &egui::Context, ui: &mut egu
             ui.add(egui::Image::new(egui::include_image!("../assets/bean.png")));
             ui.vertical(|ui| {
                 ui.add_space(5.0);
-                ui.heading("Bean Cypher");
+                ui.heading(app.set_language.get_string("app_name"));
                 ui.label(format!("Alpha v{}-dev", env!("CARGO_PKG_VERSION")));
             });
 
@@ -244,17 +281,23 @@ fn display_central_panel(app: &mut BeanCypher, ctx: &egui::Context, ui: &mut egu
             ui.add_sized(
                 [ctx.input(|i| i.screen_rect().width() - 15.0), 100.0],
                 egui::TextEdit::multiline(&mut app.input)
-                    .hint_text("Input goes here...")
+                    .hint_text(app.set_language.get_string("hint_input"))
                     .clip_text(true),
             );
         });
 
         ui.horizontal(|ui| {
-            if ui.button("Encode text").clicked() {
+            if ui
+                .button(app.set_language.get_string("btn_encode"))
+                .clicked()
+            {
                 app.output = encode::run(&app.input, &get_hash(app));
                 app.current_error = ErrorState::None;
             }
-            if ui.button("Decode text").clicked() {
+            if ui
+                .button(app.set_language.get_string("btn_decode"))
+                .clicked()
+            {
                 match decode::run(&app.input, &get_hash(app)) {
                     Ok(result) => {
                         app.output = result.0;
@@ -279,13 +322,13 @@ fn display_central_panel(app: &mut BeanCypher, ctx: &egui::Context, ui: &mut egu
         ui.separator();
 
         ui.horizontal(|ui| {
-            if ui.button("Copy to clipboard").clicked() {
+            if ui.button(app.set_language.get_string("btn_copy")).clicked() {
                 ctx.copy_text(app.output.clone());
             }
-            if ui.button("Save output as...").clicked() {
+            if ui.button(app.set_language.get_string("btn_save")).clicked() {
                 let dialog = rfd::FileDialog::new()
                     .set_file_name("output.txt")
-                    .add_filter("Text", &["txt"])
+                    .add_filter(app.set_language.get_string("text"), &["txt"])
                     .save_file();
 
                 if let Some(file) = dialog {
@@ -365,35 +408,35 @@ fn display_settings_window(app: &mut BeanCypher, ctx: &egui::Context) {
     ctx.show_viewport_immediate(
         egui::ViewportId::from_hash_of("settings"),
         egui::ViewportBuilder::default()
-            .with_title("Settings")
+            .with_title(app.set_language.get_string("menu_settings"))
             .with_maximize_button(false)
-            .with_inner_size([400.0, 200.0]),
+            .with_inner_size([450.0, 300.0]),
         |ctx, _class| {
             egui::CentralPanel::default().show(ctx, |ui| {
-                ui.heading("Settings");
-                ui.label("(Only theme selection does not get saved.)");
+                ui.heading(app.set_language.get_string("menu_settings"));
+                ui.label(app.set_language.get_string("settings_flavour"));
 
                 ui.separator();
 
                 egui::Grid::new("settings_grid")
                     .striped(true)
                     .show(ui, |ui| {
-                        ui.label("Theme");
+                        ui.label(app.set_language.get_string("set_theme"));
                         egui::global_dark_light_mode_buttons(ui);
                         ui.end_row();
 
-                        ui.label("Lowercase output");
+                        ui.label(app.set_language.get_string("set_lowercase"));
                         ui.checkbox(&mut app.set_lowercase, "");
                         ui.end_row();
 
-                        ui.label("Enable custom cypher");
+                        ui.label(app.set_language.get_string("set_enable_cypher"));
                         ui.checkbox(&mut app.set_custom_cypher, "");
                         ui.end_row();
 
-                        ui.label("Custom cypher");
-                        if ui.button("Import from text file...").clicked() {
+                        ui.label(app.set_language.get_string("set_cypher"));
+                        if ui.button(app.set_language.get_string("set_cypher_import")).clicked() {
                             match rfd::FileDialog::new()
-                                .add_filter("Text", &["txt"])
+                                .add_filter(app.set_language.get_string("text"), &["txt"])
                                 .pick_file()
                             {
                                 Some(file_path) => {
@@ -429,17 +472,36 @@ fn display_settings_window(app: &mut BeanCypher, ctx: &egui::Context) {
                             }
                         }
                         ui.label(app.set_cypher.0.clone());
+                        ui.end_row();
 
-                        // just did some testing, leaving here for later
+                        ui.label(app.set_language.get_string("set_silly"));
+                        let silly_text: String = if app.set_silly {
+                            app.set_language.get_string("silly_true")
+                        } else {
+                            app.set_language.get_string("silly_false")
+                        };
 
-                        // ui.label("Language");
-                        // egui::ComboBox::from_label("Pick a language :]")
-                        //     .selected_text(format!("{:?}", self.set_lang))
-                        //     .show_ui(ui, |ui| {
-                        //         ui.selectable_value(&mut self.set_lang, String::from("English"), "English (default)");
-                        //         ui.selectable_value(&mut self.set_lang, String::from("Latvian"), "Latvian");
-                        //     }
-                        // );
+                        if ui.button(silly_text).clicked() {
+                            app.set_silly = !app.set_silly;
+                            if app.set_silly {
+                                let mut fonts = egui::FontDefinitions::default();
+                                fonts.font_data.insert("Comic Sans".to_string(), egui::FontData::from_static(include_bytes!("../assets/comic_sans.ttf")));
+                                fonts.families.entry(egui::FontFamily::Proportional).or_default().insert(0, "Comic Sans".to_string());
+                                ctx.set_fonts(fonts);
+                            } else {
+                                ctx.set_fonts(egui::FontDefinitions::default());
+                            }
+                        }
+                        ui.end_row();
+
+                        ui.label(app.set_language.get_string("set_language"));
+                        egui::ComboBox::from_id_source("box_lang")
+                            .selected_text(format!("{:?}", app.set_language))
+                            .show_ui(ui, |ui| {
+                                ui.selectable_value(&mut app.set_language, Language::English, "English");
+                                ui.selectable_value(&mut app.set_language,Language::Latvian, "Latviešu");
+                            }
+                        )
                     });
             });
 
