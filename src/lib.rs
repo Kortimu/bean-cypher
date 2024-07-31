@@ -70,7 +70,35 @@ impl Language {
                 ("btn_copy", "Copy to clipboard"),
                 ("btn_save", "Save output..."),
                 ("text", "Text"),
-                // TODO: credits
+                (
+                    "err_cypher_phrase",
+                    "Cypher error: Cypher doesn't contain every character as a separate ID.",
+                ),
+                (
+                    "err_file_parse",
+                    "File error: Failed to parse selected file.",
+                ),
+                (
+                    "err_file_select",
+                    "File error: Failed to select a text file.",
+                ),
+                ("err_file_location", "File error: Faulty file location."),
+                // the following are unused for now because decode::run() doesn't have access to self/app/whatever
+                ("err_decode_info", "Decoding error: Input lacks info."),
+                (
+                    "err_decode_version_major",
+                    "Decoding error: Flawed major version value in Cargo.toml",
+                ),
+                (
+                    "err_decode_version_minor",
+                    "Decoding error: Flawed minor version value in Cargo.toml.",
+                ),
+                (
+                    "warn_version_0",
+                    "Warning: The text might get decoded wrong due to mismatched versions.",
+                ),
+                ("warn_version_1", "Encoded in"),
+                ("warn_version_2", "Decoded in"),
             ])
             .get(key)
             .unwrap_or(&key))
@@ -113,6 +141,43 @@ impl Language {
                 ("btn_copy", "Kopēt starpliktuvē"),
                 ("btn_save", "Saglabāt rezultātu..."),
                 ("text", "Teksts"),
+                (
+                    "err_cypher_phrase",
+                    "Šifra kļūda: Katra šifrā esošā rakstzīme nav apzīmēta ar atsevišķu ID.",
+                ),
+                (
+                    "err_file_parse",
+                    "Faila kļūda: Neizdevās parsēt doto failu.",
+                ),
+                (
+                    "err_file_select",
+                    "Faila kļūda: Neizdevās izvēlēties teksta failu.",
+                ),
+                (
+                    "err_file_location",
+                    "Faila kļūda: Kļūdaina faila atrašanās vieta.",
+                ),
+                // the following are unused for now because decode::run() doesn't have access to self/app/whatever
+                (
+                    "err_decode_info",
+                    "Atšifrēšanas kļūda: Ievadītajam trūkst informācijas.",
+                ),
+                // ??
+                (
+                    "err_decode_version_major",
+                    "Atšifrēšanas kļūda: Kļūdaina galvenās versijas vērtība Cargo.toml failā.",
+                ),
+                // ??
+                (
+                    "err_decode_version_minor",
+                    "Atšifrēšanas kļūda: Kļūdaina papildversijas vērtība Cargo.toml failā.",
+                ),
+                (
+                    "warn_version_0",
+                    "Brīdinājums: Teksts iespējami nepareizi atšifrēts atšķirīgu versiju dēļ.",
+                ),
+                ("warn_version_1", "Iekodēts versijā"),
+                ("warn_version_2", "Dekodēts versijā"),
             ])
             .get(key)
             .unwrap_or(&key))

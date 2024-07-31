@@ -186,15 +186,13 @@ fn display_menu_bar(app: &mut BeanCypher, ui: &mut egui::Ui) {
                             app.output = encode::run(&contents, &get_hash(app));
                             app.current_error = ErrorState::None;
                         } else {
-                            app.current_error = ErrorState::Error(
-                                "Error: Failed to parse selected file.".to_string(),
-                            );
+                            app.current_error =
+                                ErrorState::Error(app.set_language.get_string("err_file_parse"));
                         }
                     }
                     None => {
-                        app.current_error = ErrorState::Error(
-                            "File error: Failed to select a text file.".to_string(),
-                        );
+                        app.current_error =
+                            ErrorState::Error(app.set_language.get_string("err_file_select"));
                     }
                 }
                 ui.close_menu();
@@ -223,15 +221,13 @@ fn display_menu_bar(app: &mut BeanCypher, ui: &mut egui::Ui) {
                             };
                             app.current_error = ErrorState::None;
                         } else {
-                            app.current_error = ErrorState::Error(
-                                "Error: Failed to parse selected file.".to_string(),
-                            );
+                            app.current_error =
+                                ErrorState::Error(app.set_language.get_string("err_file_parse"));
                         }
                     }
                     None => {
-                        app.current_error = ErrorState::Error(
-                            "File error: Failed to select a text file.".to_string(),
-                        );
+                        app.current_error =
+                            ErrorState::Error(app.set_language.get_string("err_file_select"));
                     }
                 }
                 ui.close_menu();
@@ -434,7 +430,10 @@ fn display_settings_window(app: &mut BeanCypher, ctx: &egui::Context) {
                         ui.end_row();
 
                         ui.label(app.set_language.get_string("set_cypher"));
-                        if ui.button(app.set_language.get_string("set_cypher_import")).clicked() {
+                        if ui
+                            .button(app.set_language.get_string("set_cypher_import"))
+                            .clicked()
+                        {
                             match rfd::FileDialog::new()
                                 .add_filter(app.set_language.get_string("text"), &["txt"])
                                 .pick_file()
@@ -444,20 +443,27 @@ fn display_settings_window(app: &mut BeanCypher, ctx: &egui::Context) {
                                     let path = file_path.clone();
                                     match hash_convert::hash_conversions::file_to_hash(file_path) {
                                         Ok(result) => {
-                                            match hash_convert::hash_conversions::validate_cypher(&result) {
+                                            match hash_convert::hash_conversions::validate_cypher(
+                                                &result,
+                                            ) {
                                                 Some(()) => {
                                                     app.set_cypher.0 = path
                                                         .file_name()
-                                                        .unwrap_or_else(|| std::ffi::OsStr::new("Name unknown."))
+                                                        .unwrap_or_else(|| {
+                                                            std::ffi::OsStr::new("Name unknown.")
+                                                        })
                                                         .to_str()
                                                         .unwrap_or("Name unknown.")
                                                         .to_string();
 
                                                     app.set_cypher.1 = result;
                                                     app.current_error = ErrorState::None;
-                                                },
+                                                }
                                                 None => {
-                                                    app.current_error = ErrorState::Error("Cypher error: Cypher doesn't contain every character as a separate ID".to_string());
+                                                    app.current_error = ErrorState::Error(
+                                                        app.set_language
+                                                            .get_string("err_cypher_phrase"),
+                                                    );
                                                 }
                                             }
                                         }
@@ -466,7 +472,7 @@ fn display_settings_window(app: &mut BeanCypher, ctx: &egui::Context) {
                                 }
                                 None => {
                                     app.current_error = ErrorState::Error(
-                                        "Importing error: Faulty file location.".to_string(),
+                                        app.set_language.get_string("err_file_location"),
                                     );
                                 }
                             }
@@ -485,8 +491,17 @@ fn display_settings_window(app: &mut BeanCypher, ctx: &egui::Context) {
                             app.set_silly = !app.set_silly;
                             if app.set_silly {
                                 let mut fonts = egui::FontDefinitions::default();
-                                fonts.font_data.insert("Comic Sans".to_string(), egui::FontData::from_static(include_bytes!("../assets/comic_sans.ttf")));
-                                fonts.families.entry(egui::FontFamily::Proportional).or_default().insert(0, "Comic Sans".to_string());
+                                fonts.font_data.insert(
+                                    "Comic Sans".to_string(),
+                                    egui::FontData::from_static(include_bytes!(
+                                        "../assets/comic_sans.ttf"
+                                    )),
+                                );
+                                fonts
+                                    .families
+                                    .entry(egui::FontFamily::Proportional)
+                                    .or_default()
+                                    .insert(0, "Comic Sans".to_string());
                                 ctx.set_fonts(fonts);
                             } else {
                                 ctx.set_fonts(egui::FontDefinitions::default());
@@ -498,10 +513,17 @@ fn display_settings_window(app: &mut BeanCypher, ctx: &egui::Context) {
                         egui::ComboBox::from_id_source("box_lang")
                             .selected_text(format!("{:?}", app.set_language))
                             .show_ui(ui, |ui| {
-                                ui.selectable_value(&mut app.set_language, Language::English, "English");
-                                ui.selectable_value(&mut app.set_language,Language::Latvian, "Latviešu");
-                            }
-                        )
+                                ui.selectable_value(
+                                    &mut app.set_language,
+                                    Language::English,
+                                    "English",
+                                );
+                                ui.selectable_value(
+                                    &mut app.set_language,
+                                    Language::Latvian,
+                                    "Latviešu",
+                                );
+                            })
                     });
             });
 
