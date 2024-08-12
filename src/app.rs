@@ -484,7 +484,7 @@ fn display_settings_window(app: &mut BeanCypher, ctx: &egui::Context) {
                         }
                         ui.end_row();
 
-                        ui.label(app.set_language.set_language);
+                        ui.label(app.set_language.set_lang);
                         egui::ComboBox::from_id_source("box_lang")
                             .selected_text(format!("{:?}", app.set_language.lang_name))
                             .show_ui(ui, |ui| {
