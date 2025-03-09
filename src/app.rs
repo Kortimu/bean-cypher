@@ -442,7 +442,7 @@ fn display_settings_window(app: &mut BeanCypher, ctx: &egui::Context) {
 
                         ui.label(app.set_language.set_lang);
                         egui::ComboBox::from_id_source("box_lang")
-                            .selected_text(format!("{:?}", app.set_language.lang_name))
+                            .selected_text(format!("{}", app.set_language.lang_name))
                             .show_ui(ui, |ui| {
                                 ui.selectable_value(
                                     &mut app.set_language,
