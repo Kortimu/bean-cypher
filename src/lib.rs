@@ -91,7 +91,7 @@ const ENGLISH: Language = Language {
     cred_version: "Version",
     cred_creator: "Creator",
     cred_cbo: "Chief Bean Officer",
-    cred_fav_station: "Kortimu's favourite radio station",
+    cred_fav_station: "My favourite radio station",
     cred_sanity: "Current sanity levels:  Not that much",
     cred_source: "Source code",
     cred_website: "Website",
@@ -137,7 +137,7 @@ const LATVIAN: Language = Language {
     cred_version: "Versija",
     cred_creator: "Autors",
     cred_cbo: "Galvenais Pupiņu Virsnieks",
-    cred_fav_station: "Kortimu mīļākā radio stacija",
+    cred_fav_station: "Mana mīļākā radio stacija",
     cred_sanity: "Pašreizējais prāta līmenis:  Neliels",
     // ??
     cred_source: "Koda avots",
