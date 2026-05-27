@@ -43,6 +43,7 @@ pub fn run(text: &str, hash: &HashMap<usize, String>) -> Result<(String, String)
     Ok((output, warning_msg))
 }
 
+// FIXME: decoding interprets the version wrongly
 fn check_version(text_major: usize, text_minor: usize) -> Result<String, ErrorState> {
     let program_major: usize;
     let program_minor: usize;
@@ -78,12 +79,12 @@ fn decode_beans(bean: &str) -> usize {
     let a_hash = HashMap::from([("a", 0), ("A", 8), ("4", 16)]);
     let n_hash = HashMap::from([("n", 0), ("N", 4)]);
     let s_hash = HashMap::from([("s", 0), ("S", 1), ("5", 2), ("", 3)]);
-
+    
     let mut id = 0;
-
+    
     let mut chars = bean.chars();
     let mut current_char;
-
+    
     // yoink first character, convert to string, check against hash and add to id. do this 5 times. is there a better way? probably but i am learning so any sins and felonies can be forgiven
     match chars.next() {
         Some(result) => current_char = result.to_string(),
@@ -92,7 +93,7 @@ fn decode_beans(bean: &str) -> usize {
     if let Some(result) = b_hash.get(&current_char.as_str()) {
         id += result;
     }
-
+    
     match chars.next() {
         Some(result) => current_char = result.to_string(),
         None => current_char = String::new(),
@@ -100,7 +101,7 @@ fn decode_beans(bean: &str) -> usize {
     if let Some(result) = e_hash.get(&current_char.as_str()) {
         id += result;
     }
-
+    
     match chars.next() {
         Some(result) => current_char = result.to_string(),
         None => current_char = String::new(),
@@ -108,7 +109,7 @@ fn decode_beans(bean: &str) -> usize {
     if let Some(result) = a_hash.get(&current_char.as_str()) {
         id += result;
     }
-
+    
     match chars.next() {
         Some(result) => current_char = result.to_string(),
         None => current_char = String::new(),
@@ -116,7 +117,7 @@ fn decode_beans(bean: &str) -> usize {
     if let Some(result) = n_hash.get(&current_char.as_str()) {
         id += result;
     }
-
+    
     match chars.next() {
         Some(result) => current_char = result.to_string(),
         None => current_char = String::new(),
@@ -126,16 +127,16 @@ fn decode_beans(bean: &str) -> usize {
         Some(result) => id += result,
         None => id += 3,
     }
-
+    
     id
 }
 
 #[cfg(test)]
 mod tests {
     use crate::hash_convert::hash_conversions::get_default_hash;
-
+    
     use super::run;
-
+    
     #[test]
     fn decoding() {
         let decoded_result = run("beans beans beans beanS bean5 bean beaNs beaNS beaN5 beaN beAns beAnS beAn5 beAn beANs beANS beAN5 beAN be4ns be4nS be4n5 be4n be4Ns be4NS be4N5 be4N bEans bEanS bEan5 bEan bEaNs bEaNS bEaN5 bEaN bEAns bEAnS bEAn5 bEAn bEANs bEANS bEAN5 bEAN bE4ns bE4nS bE4n5 bE4n bE4Ns bE4NS bE4N5 bE4N b3ans b3anS b3an5 b3an b3aNs b3aNS b3aN5 b3aN b3Ans b3AnS b3An5 b3An b3ANs b3ANS b3AN5 b3AN b34ns b34nS b34n5 b34n b34Ns b34NS b34N5 b34N Beans BeanS Bean5 Bean BeaNs BeaNS BeaN5 BeaN", &get_default_hash());

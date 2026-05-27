@@ -2,6 +2,8 @@ use std::collections::HashMap;
 use std::fs;
 use std::io::Read;
 
+use egui::Vec2;
+
 use crate::decode;
 use crate::encode;
 use crate::hash_convert;
@@ -34,6 +36,8 @@ pub struct BeanCypher {
     // FIXME: i'd rather not have this not saved but lifetimes are bullying me so i will accept a life without saved language preferences :[
     #[serde(skip)]
     set_language: Language,
+    set_discord_mode: bool,
+    set_discord_gif: String,
 }
 
 impl Default for BeanCypher {
@@ -53,6 +57,8 @@ impl Default for BeanCypher {
             ),
             set_silly: false,
             set_language: ENGLISH,
+            set_discord_mode: false,
+            set_discord_gif: String::new(),
         }
     }
 }
@@ -268,6 +274,13 @@ fn display_central_panel(app: &mut BeanCypher, ctx: &egui::Context, ui: &mut egu
         ui.horizontal(|ui| {
             if ui.button(app.set_language.btn_encode).clicked() {
                 app.output = encode::run(&app.input, &get_hash(app));
+                if app.set_discord_mode == true {
+                    let mut discord_gif_in_question: String = app.set_discord_gif.clone();
+                    if discord_gif_in_question == "" {
+                        discord_gif_in_question = String::from("https://c.tenor.com/L7m_96pUf50AAAAC/tenor.gif");
+                    }
+                    app.output = format!("[{}]({})", app.output, discord_gif_in_question);
+                }
                 app.current_error = ErrorState::None;
             }
             if ui.button(app.set_language.btn_decode).clicked() {
@@ -407,8 +420,12 @@ fn display_settings_window(app: &mut BeanCypher, ctx: &egui::Context) {
                         ui.end_row();
 
                         ui.label(app.set_language.set_cypher);
-                        set_custom_cypher_btn(app, ui);
-                        ui.label(app.set_cypher.0.clone());
+                        ui.add_enabled_ui(app.set_custom_cypher, |ui| {
+                            ui.horizontal(|ui| {
+                                set_custom_cypher_btn(app, ui);
+                                ui.label(app.set_cypher.0.clone());
+                            });
+                        });
                         ui.end_row();
 
                         ui.label(app.set_language.set_silly);
@@ -454,7 +471,21 @@ fn display_settings_window(app: &mut BeanCypher, ctx: &egui::Context) {
                                     LATVIAN,
                                     LATVIAN.lang_name,
                                 );
-                            })
+                            });
+                        ui.end_row();
+                        
+                        ui.label("E.D.G.E.");
+                        ui.checkbox(&mut app.set_discord_mode, "(Extra Discord GIF Encrypting)");
+                        ui.end_row();
+
+                        ui.label("discord gif in question:");
+                        ui.add_enabled(
+                            app.set_discord_mode,
+                            egui::TextEdit::multiline(&mut app.set_discord_gif)
+                                .hint_text("https://c.tenor.com/L7m_96pUf50AAAAC/tenor.gif")
+                                .clip_text(true)
+                                .min_size(Vec2::new(250.0, 50.0))
+                            ).enabled();
                     });
             });
 
