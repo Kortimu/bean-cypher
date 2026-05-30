@@ -14,7 +14,7 @@ pub fn run(text: &str, hash: &HashMap<usize, String>) -> Result<(String, String)
 
     if let Some(mut result) = beans.next() {
         
-        if result.starts_with("[") {
+        if result.starts_with('[') {
             result = result.strip_prefix('[').unwrap_or(result);
         }
         

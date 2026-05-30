@@ -216,7 +216,7 @@ fn display_menu_bar(app: &mut BeanCypher, ui: &mut egui::Ui) {
                                     app.current_error = ErrorState::Warning(result.1);
                                 }
                                 Err(error) => app.current_error = error,
-                            };
+                            }
                             app.current_error = ErrorState::None;
                         } else {
                             app.current_error =
@@ -274,9 +274,9 @@ fn display_central_panel(app: &mut BeanCypher, ctx: &egui::Context, ui: &mut egu
         ui.horizontal(|ui| {
             if ui.button(app.set_language.btn_encode).clicked() {
                 app.output = encode::run(&app.input, &get_hash(app));
-                if app.set_discord_mode == true {
+                if app.set_discord_mode {
                     let mut discord_gif_in_question: String = app.set_discord_gif.clone();
-                    if discord_gif_in_question == "" {
+                    if discord_gif_in_question.is_empty() {
                         discord_gif_in_question = String::from("https://c.tenor.com/L7m_96pUf50AAAAC/tenor.gif");
                     }
                     app.output = format!("[{}]({})", app.output, discord_gif_in_question);
@@ -294,7 +294,7 @@ fn display_central_panel(app: &mut BeanCypher, ctx: &egui::Context, ui: &mut egu
                         }
                     }
                     Err(error) => app.current_error = error,
-                };
+                }
                 if app.set_lowercase {
                     app.output = app.output.to_lowercase();
                 }
@@ -303,7 +303,7 @@ fn display_central_panel(app: &mut BeanCypher, ctx: &egui::Context, ui: &mut egu
 
         ui.separator();
 
-        ui.label(app.output.to_string());
+        ui.label(app.output.clone());
 
         ui.separator();
 

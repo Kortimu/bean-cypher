@@ -117,7 +117,7 @@ pub mod hash_conversions {
 
     pub fn id_to_string(id: usize, hash: &HashMap<usize, String>) -> String {
         if let Some(result) = hash.get(&id) {
-            return result.to_string();
+            return result.clone();
         }
         String::new()
     }
