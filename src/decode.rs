@@ -12,7 +12,12 @@ pub fn run(text: &str, hash: &HashMap<usize, String>) -> Result<(String, String)
     let text_major: usize;
     let text_minor: usize;
 
-    if let Some(result) = beans.next() {
+    if let Some(mut result) = beans.next() {
+        
+        if result.starts_with("[") {
+            result = result.strip_prefix('[').unwrap_or(result);
+        }
+        
         text_major = decode_beans(result);
     } else {
         return Err(ErrorState::Error(
@@ -43,7 +48,6 @@ pub fn run(text: &str, hash: &HashMap<usize, String>) -> Result<(String, String)
     Ok((output, warning_msg))
 }
 
-// FIXME: decoding interprets the version wrongly
 fn check_version(text_major: usize, text_minor: usize) -> Result<String, ErrorState> {
     let program_major: usize;
     let program_minor: usize;
