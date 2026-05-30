@@ -396,7 +396,7 @@ fn display_settings_window(app: &mut BeanCypher, ctx: &egui::Context) {
         egui::ViewportBuilder::default()
             .with_title(app.set_language.menu_settings)
             .with_maximize_button(false)
-            .with_inner_size([450.0, 300.0]),
+            .with_inner_size([400.0, 325.0]),
         |ctx, _class| {
             egui::CentralPanel::default().show(ctx, |ui| {
                 ui.heading(app.set_language.menu_settings);
@@ -407,27 +407,36 @@ fn display_settings_window(app: &mut BeanCypher, ctx: &egui::Context) {
                 egui::Grid::new("settings_grid")
                     .striped(true)
                     .show(ui, |ui| {
+                        // theme setting
                         ui.label(app.set_language.set_theme);
                         egui::global_dark_light_mode_buttons(ui);
                         ui.end_row();
 
+                        // language setting
+                        ui.label(app.set_language.set_lang);
+                        egui::ComboBox::from_id_source("box_lang")
+                            .selected_text(app.set_language.lang_name.to_string())
+                            .show_ui(ui, |ui| {
+                                ui.selectable_value(
+                                    &mut app.set_language,
+                                    ENGLISH,
+                                    ENGLISH.lang_name,
+                                );
+                                ui.selectable_value(
+                                    &mut app.set_language,
+                                    LATVIAN,
+                                    LATVIAN.lang_name,
+                                );
+                            });
+                        ui.end_row();
+
+                        // lowercase setting
                         ui.label(app.set_language.set_lowercase);
                         ui.checkbox(&mut app.set_lowercase, "");
-                        ui.end_row();
+                        ui.end_row();                        
 
-                        ui.label(app.set_language.set_enable_cypher);
-                        ui.checkbox(&mut app.set_custom_cypher, "");
-                        ui.end_row();
-
-                        ui.label(app.set_language.set_cypher);
-                        ui.add_enabled_ui(app.set_custom_cypher, |ui| {
-                            ui.horizontal(|ui| {
-                                set_custom_cypher_btn(app, ui);
-                                ui.label(app.set_cypher.0.clone());
-                            });
-                        });
-                        ui.end_row();
-
+                        
+                        // silly button
                         ui.label(app.set_language.set_silly);
                         let silly_text: &str = if app.set_silly {
                             app.set_language.silly_true
@@ -457,23 +466,29 @@ fn display_settings_window(app: &mut BeanCypher, ctx: &egui::Context) {
                         }
                         ui.end_row();
 
-                        ui.label(app.set_language.set_lang);
-                        egui::ComboBox::from_id_source("box_lang")
-                            .selected_text(app.set_language.lang_name.to_string())
-                            .show_ui(ui, |ui| {
-                                ui.selectable_value(
-                                    &mut app.set_language,
-                                    ENGLISH,
-                                    ENGLISH.lang_name,
-                                );
-                                ui.selectable_value(
-                                    &mut app.set_language,
-                                    LATVIAN,
-                                    LATVIAN.lang_name,
-                                );
+                        ui.separator();
+                        ui.separator();
+                        ui.end_row();
+
+                        // custom cypher
+                        ui.label(app.set_language.set_enable_cypher);
+                        ui.checkbox(&mut app.set_custom_cypher, "");
+                        ui.end_row();
+
+                        ui.label(app.set_language.set_cypher);
+                        ui.add_enabled_ui(app.set_custom_cypher, |ui| {
+                            ui.horizontal(|ui| {
+                                set_custom_cypher_btn(app, ui);
+                                ui.label(app.set_cypher.0.clone());
                             });
+                        });
                         ui.end_row();
                         
+                        ui.separator();
+                        ui.separator();
+                        ui.end_row();
+
+                        // e.d.g.e. :]
                         ui.label("E.D.G.E.");
                         ui.checkbox(&mut app.set_discord_mode, "(Extra Discord GIF Encrypting)");
                         ui.end_row();
