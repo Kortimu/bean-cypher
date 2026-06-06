@@ -275,7 +275,8 @@ fn display_central_panel(app: &mut BeanCypher, ui: &mut egui::Ui) {
                 if app.set_discord_mode {
                     let mut discord_gif_in_question: String = app.set_discord_gif.clone();
                     if discord_gif_in_question.is_empty() {
-                        discord_gif_in_question = String::from("https://c.tenor.com/L7m_96pUf50AAAAC/tenor.gif");
+                        discord_gif_in_question =
+                            String::from("https://c.tenor.com/L7m_96pUf50AAAAC/tenor.gif");
                     }
                     app.output = format!("[{}]({})", app.output, discord_gif_in_question);
                 }
@@ -391,7 +392,7 @@ fn display_settings_window(app: &mut BeanCypher, ui: &egui::Ui) {
         egui::ViewportBuilder::default()
             .with_title(app.set_language.menu_settings)
             .with_maximize_button(false)
-            .with_inner_size([400.0, 325.0]),
+            .with_inner_size([400.0, 350.0]),
         |ui, _class| {
             egui::CentralPanel::default().show_inside(ui, |ui| {
                 ui.heading(app.set_language.menu_settings);
@@ -489,13 +490,15 @@ fn display_settings_window(app: &mut BeanCypher, ui: &egui::Ui) {
                         ui.end_row();
 
                         ui.label("discord gif in question:");
-                        ui.add_enabled(
-                            app.set_discord_mode,
-                            egui::TextEdit::multiline(&mut app.set_discord_gif)
-                                .hint_text("https://c.tenor.com/L7m_96pUf50AAAAC/tenor.gif")
-                                .clip_text(true)
-                                .min_size(Vec2::new(250.0, 45.0))
-                            ).enabled();
+                        egui::ScrollArea::vertical().show(ui, |ui| {
+                            ui.add_enabled(
+                                app.set_discord_mode,
+                                egui::TextEdit::multiline(&mut app.set_discord_gif)
+                                    .hint_text("https://c.tenor.com/L7m_96pUf50AAAAC/tenor.gif")
+                                    .min_size(Vec2::new(250.0, 45.0)),
+                            )
+                            .enabled();
+                        });
                     });
             });
 
