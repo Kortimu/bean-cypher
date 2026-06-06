@@ -147,11 +147,8 @@ pub mod hash_conversions {
                     previous_text.truncate(result.0);
 
                     let difference = previous_text.len() - previous_text.chars().count();
-                    let correct_index = result.0 - difference;
-                    phrases.insert(
-                        phrases.len(),
-                        (correct_index.max(0), string_to_id(result.1, hash)),
-                    );
+                    let correct_index = result.0.saturating_sub(difference);
+                    phrases.insert(phrases.len(), (correct_index, string_to_id(result.1, hash)));
                 }
             }
         }

@@ -70,9 +70,9 @@ impl BeanCypher {
         // Restore app state using cc.storage (requires the "persistence" feature).
         // Use the cc.gl (a glow::Context) to create graphics shaders and buffers that you can use
         // for e.g. egui::PaintCallback.
-        let old_style = cc.egui_ctx.style().as_ref().clone();
-        let old_spacing = cc.egui_ctx.style().spacing.clone();
-        cc.egui_ctx.set_style(egui::Style {
+        let old_style = cc.egui_ctx.global_style().as_ref().clone();
+        let old_spacing = cc.egui_ctx.global_style().spacing.clone();
+        cc.egui_ctx.set_global_style(egui::Style {
             spacing: egui::style::Spacing {
                 scroll: egui::style::ScrollStyle::solid(),
                 ..old_spacing
@@ -90,28 +90,28 @@ impl BeanCypher {
 }
 
 impl eframe::App for BeanCypher {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        egui::TopBottomPanel::top("top").show(ctx, |ui| {
+    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
+        egui::Panel::top("top").show_inside(ui, |ui| {
             display_menu_bar(self, ui);
         });
 
-        egui::CentralPanel::default().show(ctx, |ui| {
-            display_central_panel(self, ctx, ui);
+        egui::CentralPanel::default().show_inside(ui, |ui| {
+            display_central_panel(self, ui);
         });
 
         if self.show_settings {
-            display_settings_window(self, ctx);
+            display_settings_window(self, ui);
         }
 
         if self.show_credits {
-            ctx.show_viewport_immediate(
+            ui.show_viewport_immediate(
                 egui::ViewportId::from_hash_of("credits"),
                 egui::ViewportBuilder::default()
                     .with_title(self.set_language.menu_credits)
                     .with_maximize_button(false)
                     .with_inner_size([350.0, 500.0]),
-                |ctx, _class| {
-                    egui::CentralPanel::default().show(ctx, |ui| {
+                |ui, _class| {
+                    egui::CentralPanel::default().show_inside(ui, |ui| {
                         ui.horizontal(|ui| {
                             ui.set_height(100.0);
 
@@ -156,7 +156,7 @@ impl eframe::App for BeanCypher {
                         ui.image(egui::include_image!("../assets/funny_image.png"));
                     });
 
-                    if ctx.input(|i| i.viewport().close_requested()) {
+                    if ui.input(|i| i.viewport().close_requested()) {
                         self.show_credits = false;
                     }
                 },
@@ -170,7 +170,7 @@ impl eframe::App for BeanCypher {
 }
 
 fn display_menu_bar(app: &mut BeanCypher, ui: &mut egui::Ui) {
-    egui::menu::bar(ui, |ui| {
+    egui::MenuBar::new().ui(ui, |ui| {
         ui.menu_button(app.set_language.menu_file, |ui| {
             if ui.button(app.set_language.menu_file_encode).clicked() {
                 match rfd::FileDialog::new()
@@ -180,8 +180,7 @@ fn display_menu_bar(app: &mut BeanCypher, ui: &mut egui::Ui) {
                     Some(file_path) => {
                         let potential_file = std::fs::File::open(file_path);
 
-                        if potential_file.is_ok() {
-                            let mut file = potential_file.expect("ah fuck");
+                        if let Ok(mut file) = potential_file {
                             let mut contents = String::new();
                             file.read_to_string(&mut contents).expect("ah fuck");
                             app.output = encode::run(&contents, &get_hash(app));
@@ -196,7 +195,7 @@ fn display_menu_bar(app: &mut BeanCypher, ui: &mut egui::Ui) {
                             ErrorState::Error(app.set_language.err_file_select.to_string());
                     }
                 }
-                ui.close_menu();
+                ui.close();
             }
             if ui.button(app.set_language.menu_file_decode).clicked() {
                 match rfd::FileDialog::new()
@@ -206,8 +205,7 @@ fn display_menu_bar(app: &mut BeanCypher, ui: &mut egui::Ui) {
                     Some(file_path) => {
                         let potential_file = std::fs::File::open(file_path);
 
-                        if potential_file.is_ok() {
-                            let mut file = potential_file.expect("ah fuck");
+                        if let Ok(mut file) = potential_file {
                             let mut contents = String::new();
                             file.read_to_string(&mut contents).expect("ah fuck");
                             match decode::run(&contents, &get_hash(app)) {
@@ -228,7 +226,7 @@ fn display_menu_bar(app: &mut BeanCypher, ui: &mut egui::Ui) {
                             ErrorState::Error(app.set_language.err_file_select.to_string());
                     }
                 }
-                ui.close_menu();
+                ui.close();
             }
             // reminder: this will probably be only on windows
             if ui.button(app.set_language.menu_file_quit).clicked() {
@@ -245,7 +243,7 @@ fn display_menu_bar(app: &mut BeanCypher, ui: &mut egui::Ui) {
     });
 }
 
-fn display_central_panel(app: &mut BeanCypher, ctx: &egui::Context, ui: &mut egui::Ui) {
+fn display_central_panel(app: &mut BeanCypher, ui: &mut egui::Ui) {
     egui::ScrollArea::vertical().show(ui, |ui| {
         ui.horizontal(|ui| {
             ui.set_height(55.0);
@@ -264,7 +262,7 @@ fn display_central_panel(app: &mut BeanCypher, ctx: &egui::Context, ui: &mut egu
 
         egui::ScrollArea::vertical().show(ui, |ui| {
             ui.add_sized(
-                [ctx.input(|i| i.screen_rect().width() - 15.0), 100.0],
+                [ui.input(|i| i.content_rect().width() - 15.0), 100.0],
                 egui::TextEdit::multiline(&mut app.input)
                     .hint_text(app.set_language.hint_input)
                     .clip_text(true),
@@ -309,7 +307,7 @@ fn display_central_panel(app: &mut BeanCypher, ctx: &egui::Context, ui: &mut egu
 
         ui.horizontal(|ui| {
             if ui.button(app.set_language.btn_copy).clicked() {
-                ctx.copy_text(app.output.clone());
+                ui.copy_text(app.output.clone());
             }
             if ui.button(app.set_language.btn_save).clicked() {
                 let dialog = rfd::FileDialog::new()
@@ -326,7 +324,7 @@ fn display_central_panel(app: &mut BeanCypher, ctx: &egui::Context, ui: &mut egu
 }
 
 fn display_info_bar(app: &BeanCypher, ui: &mut egui::Ui) {
-    egui::Frame::none()
+    egui::Frame::new()
         .fill(match app.current_error {
             ErrorState::Error(_) => egui::Color32::from_hex("#cf103190")
                 .expect("Error: Faulty hex code value for warning."),
@@ -336,17 +334,17 @@ fn display_info_bar(app: &BeanCypher, ui: &mut egui::Ui) {
                 egui::Color32::from_hex("#0000").expect("Error: Faulty hex code value for warning.")
             }
         })
-        .rounding(egui::Rounding {
-            nw: 5.0,
-            ne: 5.0,
-            sw: 5.0,
-            se: 5.0,
+        .corner_radius(egui::CornerRadius {
+            nw: 5,
+            ne: 5,
+            sw: 5,
+            se: 5,
         })
         .inner_margin(egui::Margin {
-            left: 10.0,
-            top: 5.0,
-            bottom: 5.0,
-            right: 10.0,
+            left: 10,
+            top: 5,
+            bottom: 5,
+            right: 10,
         })
         .show(ui, |ui| {
             ui.set_width(ui.available_width());
@@ -378,11 +376,8 @@ fn display_info_bar(app: &BeanCypher, ui: &mut egui::Ui) {
                         egui::Image::new(egui::include_image!("../assets/warning.png"))
                             .max_height(30.0),
                     ),
-                    // FIXME: janky fucked up workaround that i'd prefer not exist
-                    ErrorState::None => ui.add(
-                        egui::Image::new(egui::include_image!("../assets/error.png"))
-                            .max_height(0.0),
-                    ),
+                    // feels a lil jank but it's prob fine?
+                    ErrorState::None => ui.label(""),
                 };
 
                 ui.label(app.current_error.clone().into_string());
@@ -390,15 +385,15 @@ fn display_info_bar(app: &BeanCypher, ui: &mut egui::Ui) {
         });
 }
 
-fn display_settings_window(app: &mut BeanCypher, ctx: &egui::Context) {
-    ctx.show_viewport_immediate(
+fn display_settings_window(app: &mut BeanCypher, ui: &egui::Ui) {
+    ui.show_viewport_immediate(
         egui::ViewportId::from_hash_of("settings"),
         egui::ViewportBuilder::default()
             .with_title(app.set_language.menu_settings)
             .with_maximize_button(false)
             .with_inner_size([400.0, 325.0]),
-        |ctx, _class| {
-            egui::CentralPanel::default().show(ctx, |ui| {
+        |ui, _class| {
+            egui::CentralPanel::default().show_inside(ui, |ui| {
                 ui.heading(app.set_language.menu_settings);
                 ui.label(app.set_language.settings_flavour);
 
@@ -409,12 +404,12 @@ fn display_settings_window(app: &mut BeanCypher, ctx: &egui::Context) {
                     .show(ui, |ui| {
                         // theme setting
                         ui.label(app.set_language.set_theme);
-                        egui::global_dark_light_mode_buttons(ui);
+                        egui::global_theme_preference_buttons(ui);
                         ui.end_row();
 
                         // language setting
                         ui.label(app.set_language.set_lang);
-                        egui::ComboBox::from_id_source("box_lang")
+                        egui::ComboBox::from_id_salt("box_lang")
                             .selected_text(app.set_language.lang_name.to_string())
                             .show_ui(ui, |ui| {
                                 ui.selectable_value(
@@ -433,9 +428,8 @@ fn display_settings_window(app: &mut BeanCypher, ctx: &egui::Context) {
                         // lowercase setting
                         ui.label(app.set_language.set_lowercase);
                         ui.checkbox(&mut app.set_lowercase, "");
-                        ui.end_row();                        
+                        ui.end_row();
 
-                        
                         // silly button
                         ui.label(app.set_language.set_silly);
                         let silly_text: &str = if app.set_silly {
@@ -452,16 +446,17 @@ fn display_settings_window(app: &mut BeanCypher, ctx: &egui::Context) {
                                     "Comic Sans".to_string(),
                                     egui::FontData::from_static(include_bytes!(
                                         "../assets/comic_sans.ttf"
-                                    )),
+                                    ))
+                                    .into(),
                                 );
                                 fonts
                                     .families
                                     .entry(egui::FontFamily::Proportional)
                                     .or_default()
                                     .insert(0, "Comic Sans".to_string());
-                                ctx.set_fonts(fonts);
+                                ui.set_fonts(fonts);
                             } else {
-                                ctx.set_fonts(egui::FontDefinitions::default());
+                                ui.set_fonts(egui::FontDefinitions::default());
                             }
                         }
                         ui.end_row();
@@ -483,7 +478,7 @@ fn display_settings_window(app: &mut BeanCypher, ctx: &egui::Context) {
                             });
                         });
                         ui.end_row();
-                        
+
                         ui.separator();
                         ui.separator();
                         ui.end_row();
@@ -499,12 +494,12 @@ fn display_settings_window(app: &mut BeanCypher, ctx: &egui::Context) {
                             egui::TextEdit::multiline(&mut app.set_discord_gif)
                                 .hint_text("https://c.tenor.com/L7m_96pUf50AAAAC/tenor.gif")
                                 .clip_text(true)
-                                .min_size(Vec2::new(250.0, 50.0))
+                                .min_size(Vec2::new(250.0, 45.0))
                             ).enabled();
                     });
             });
 
-            if ctx.input(|i| i.viewport().close_requested()) {
+            if ui.input(|i| i.viewport().close_requested()) {
                 app.show_settings = false;
             }
         },
