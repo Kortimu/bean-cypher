@@ -83,27 +83,21 @@ impl BeanCypher {
         });
         egui_extras::install_image_loaders(&cc.egui_ctx);
 
-        
         // not sure if this kind of editing is needed but eh
-        let app: Self = if let Some(storage) = cc.storage {
+        let app = cc.storage.map_or_else(Self::default, |storage| {
             eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default()
-        } else {
-            Self::default()
-        };
-        
+        });
+
         cc.egui_ctx.options_mut(|o| {
             o.theme_preference = app.set_theme;
         });
-        
+
         if app.set_silly {
             // not sure if this is too long? but it works. eh
             let mut fonts = egui::FontDefinitions::default();
             fonts.font_data.insert(
                 "Comic Sans".to_string(),
-                egui::FontData::from_static(include_bytes!(
-                    "../assets/comic_sans.ttf"
-                ))
-                .into(),
+                egui::FontData::from_static(include_bytes!("../assets/comic_sans.ttf")).into(),
             );
             fonts
                 .families
@@ -414,6 +408,7 @@ fn display_info_bar(app: &BeanCypher, ui: &mut egui::Ui) {
         });
 }
 
+#[allow(clippy::too_many_lines)]
 fn display_settings_window(app: &mut BeanCypher, ui: &egui::Ui) {
     ui.show_viewport_immediate(
         egui::ViewportId::from_hash_of("settings"),
