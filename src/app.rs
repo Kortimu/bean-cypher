@@ -28,10 +28,11 @@ pub struct BeanCypher {
     #[serde(skip)]
     current_error: ErrorState,
 
+    set_theme: egui::ThemePreference,
     set_lowercase: bool,
     set_custom_cypher: bool,
     set_cypher: (String, HashMap<usize, String>),
-    #[serde(skip)]
+    // #[serde(skip)]
     set_silly: bool,
     // FIXME: i'd rather not have this not saved but lifetimes are bullying me so i will accept a life without saved language preferences :[
     #[serde(skip)]
@@ -49,6 +50,7 @@ impl Default for BeanCypher {
             show_credits: false,
             current_error: ErrorState::None,
 
+            set_theme: egui::ThemePreference::System,
             set_lowercase: false,
             set_custom_cypher: false,
             set_cypher: (
@@ -81,11 +83,37 @@ impl BeanCypher {
         });
         egui_extras::install_image_loaders(&cc.egui_ctx);
 
-        if let Some(storage) = cc.storage {
-            return eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
+        
+        // not sure if this kind of editing is needed but eh
+        let app: Self = if let Some(storage) = cc.storage {
+            eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default()
+        } else {
+            Self::default()
+        };
+        
+        cc.egui_ctx.options_mut(|o| {
+            o.theme_preference = app.set_theme;
+        });
+        
+        if app.set_silly {
+            // not sure if this is too long? but it works. eh
+            let mut fonts = egui::FontDefinitions::default();
+            fonts.font_data.insert(
+                "Comic Sans".to_string(),
+                egui::FontData::from_static(include_bytes!(
+                    "../assets/comic_sans.ttf"
+                ))
+                .into(),
+            );
+            fonts
+                .families
+                .entry(egui::FontFamily::Proportional)
+                .or_default()
+                .insert(0, "Comic Sans".to_string());
+            cc.egui_ctx.set_fonts(fonts);
         }
 
-        Self::default()
+        app
     }
 }
 
@@ -405,7 +433,14 @@ fn display_settings_window(app: &mut BeanCypher, ui: &egui::Ui) {
                     .show(ui, |ui| {
                         // theme setting
                         ui.label(app.set_language.set_theme);
-                        egui::global_theme_preference_buttons(ui);
+                        // i could set the theme every frame but eh, why not optimize
+                        let theme_setting_of_before = app.set_theme;
+                        app.set_theme.radio_buttons(ui);
+                        if theme_setting_of_before != app.set_theme {
+                            ui.ctx().options_mut(|o| {
+                                o.theme_preference = app.set_theme;
+                            });
+                        }
                         ui.end_row();
 
                         // language setting
