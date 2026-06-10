@@ -1,5 +1,29 @@
 mod app;
 pub use app::BeanCypher;
+mod app_test;
+pub use app_test::TestApp;
+
+#[derive(PartialEq, serde::Deserialize, serde::Serialize)]
+enum Tab {
+    Cypher,
+    Settings,
+    Credits,
+    Manual,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, serde::Deserialize, serde::Serialize)]
+enum ManualSection {
+    Intro,
+    Vision,
+    Encrypting,
+    Decrypting,
+    Settings,
+    FileShenanigans,
+    Roadmap,
+    Faq,
+    Thanks,
+    Social,
+}
 
 #[path = "decode.rs"]
 mod decode;
