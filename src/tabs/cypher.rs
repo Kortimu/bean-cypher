@@ -1,5 +1,8 @@
 use crate::TestApp;
 use crate::ErrorType;
+use crate::decode;
+use crate::encode;
+use crate::hash_convert::hash_conversions::get_default_hash;
 
 pub fn show_main_menu(ui: &mut egui::Ui, app: &mut TestApp) {
     ui.heading("CYPHER!!!!");
@@ -13,6 +16,8 @@ pub fn show_main_menu(ui: &mut egui::Ui, app: &mut TestApp) {
             if app.input == String::new() {
                 app.active_error = Some(ErrorType::EmptyInput);
             } else {
+                app.output = encode::run(&app.input, &get_default_hash());
+                
                 app.output_shown = true;
             }
         }
@@ -20,13 +25,14 @@ pub fn show_main_menu(ui: &mut egui::Ui, app: &mut TestApp) {
             if app.input == String::new() {
                 app.active_error = Some(ErrorType::EmptyInput);
             } else {
+                app.output = decode::run(&app.input, &get_default_hash()).unwrap().0;
                 app.output_shown = true;
             }
         }
     });
 
     if app.output_shown {
-        show_output(ui, app);
+        show_output(ui, app, app.output.clone());
     }
 
     if app.active_error.is_some() {
@@ -38,6 +44,7 @@ fn show_error(ui: &mut egui::Ui, app: &mut TestApp) {
     let error_text = match app.active_error {
         Some(ErrorType::EmptyInput) => "maybe enter a fucking letter in dumbass bloke",
         Some(ErrorType::_FailedFile) => "cringe file moment",
+        Some(ErrorType::_DecodingInputLacksInfo) => "decoding error: maybe check what you want me to decode ya closeted fuck",
         None => "IF YOU SEE THIS SOMETHING HAS GONE SEVERELY FUCKED"
     };
     
@@ -50,21 +57,27 @@ fn show_error(ui: &mut egui::Ui, app: &mut TestApp) {
         });
 }
 
-fn show_output(ui: &mut egui::Ui, app: &mut TestApp) {
+fn show_output(ui: &mut egui::Ui, app: &mut TestApp, output: String) {
     egui::Modal::new(egui::Id::new("whoopsie_daisie"))
         .show(ui, |ui| {
-            ui.label("look at this shit:");
+
+            ui.label("look at this shit");
             egui::Frame::group(ui.style()).show(ui, |ui| {
-                // FIXME: reminder that here goes the encoded stuffs
-                ui.label(app.input.clone());
+                if app.set_lowoutput {
+                    ui.label(output.to_lowercase());
+                } else {
+                    ui.label(output);
+                }
             });
-            // ui.columns(2, |_cols| {
-                if ui.button("copy").clicked() {
+
+            ui.columns(2, |cols| {
+                if cols[0].button("copy").clicked() {
+                    cols[0].copy_text(app.output.clone());
                     app.output_shown = false;
                 }
-                if ui.button("save").clicked() {
+                if cols[1].button("save").clicked() {
                     app.output_shown = false;
                 }
-            // });
+            });
         });
 }

@@ -27,8 +27,13 @@ enum ManualSection {
 
 enum ErrorType {
     EmptyInput,
+    _DecodingInputLacksInfo,
     _FailedFile
 }
+
+#[path = "widgets/toggle_button.rs"]
+mod toggle_button;
+use crate::toggle_button::toggle;
 
 // ----------------- old stuff begins here -----------------
 

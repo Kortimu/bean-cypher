@@ -23,8 +23,13 @@ mod credits;
 #[serde(default)] // if we add new fields, give them default values when deserializing old state
 pub struct TestApp {
     input: String,
+    #[serde(skip)]
+    output: String,
+    #[serde(skip)]
     current_tab: Tab,
     manual_section: ManualSection,
+
+    set_lowoutput: bool,
 
     #[serde(skip)]
     // TODO: might wanna merge with active_error -> active_result
@@ -38,8 +43,11 @@ impl Default for TestApp {
     fn default() -> Self {
         Self {
             input: String::new(),
+            output: String::new(),
             manual_section: ManualSection::Intro,
             current_tab: Tab::Cypher,
+
+            set_lowoutput: false,
             
             output_shown: false,
             active_error: None
@@ -119,7 +127,7 @@ impl eframe::App for TestApp {
                     show_main_menu(ui, self);
                 },
                 Tab::Settings => {
-                    show_settings(ui);
+                    show_settings(ui, self);
                 },
                 Tab::Manual => {
                     show_manual(ui);
