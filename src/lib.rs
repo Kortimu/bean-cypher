@@ -25,6 +25,13 @@ enum ManualSection {
     Social,
 }
 
+enum ErrorType {
+    EmptyInput,
+    _FailedFile
+}
+
+// ----------------- old stuff begins here -----------------
+
 #[path = "decode.rs"]
 mod decode;
 #[path = "encode.rs"]
