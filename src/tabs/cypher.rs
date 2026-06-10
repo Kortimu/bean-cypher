@@ -7,8 +7,32 @@ use crate::hash_convert::hash_conversions::get_default_hash;
 pub fn show_main_menu(ui: &mut egui::Ui, app: &mut TestApp) {
     ui.heading("CYPHER!!!!");
 
-    egui::ScrollArea::vertical().show(ui, |ui| {
-        ui.add(egui::TextEdit::multiline(&mut app.input));
+    ui.horizontal(|ui| {
+        ui.set_height(150.0);
+        egui::ScrollArea::vertical()
+            .max_height(150.0)
+            .show(ui, |ui| {
+                ui.add_sized(
+                    [ui.available_width() - 50.0, ui.available_height()],
+                    egui::TextEdit::multiline(&mut app.input)
+                        .hint_text("come the fuck on type some shit ya wanker")
+                );
+        });
+
+        ui.vertical(|ui| {
+            if ui.add_sized(
+                [45.0, 73.0], 
+                egui::Button::new(egui::RichText::new("⊗").size(35.0))
+            ).clicked() {
+                app.input = String::new();
+            }
+            if ui.add_sized(
+                [45.0, 73.0], 
+                egui::Button::new(egui::RichText::new("📂").size(35.0))
+            ).clicked() {
+                app.active_error = Some(ErrorType::Wip);
+            }
+        });
     });
 
     ui.columns(2, |cols| {
@@ -45,13 +69,14 @@ fn show_error(ui: &mut egui::Ui, app: &mut TestApp) {
         Some(ErrorType::EmptyInput) => "maybe enter a fucking letter in dumbass bloke",
         Some(ErrorType::_FailedFile) => "cringe file moment",
         Some(ErrorType::_DecodingInputLacksInfo) => "decoding error: maybe check what you want me to decode ya closeted fuck",
+        Some(ErrorType::Wip) => "i haven't implemented this yet nitwit",
         None => "IF YOU SEE THIS SOMETHING HAS GONE SEVERELY FUCKED"
     };
     
     egui::Modal::new(egui::Id::new("whoopsie_daisie"))
         .show(ui, |ui| {
             ui.label(error_text);
-            if ui.button("OK").clicked() {
+            if ui.button("aight got it bud").clicked() {
                 app.active_error = None;
             }
         });

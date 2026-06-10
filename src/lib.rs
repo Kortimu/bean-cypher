@@ -28,7 +28,8 @@ enum ManualSection {
 enum ErrorType {
     EmptyInput,
     _DecodingInputLacksInfo,
-    _FailedFile
+    _FailedFile,
+    Wip
 }
 
 #[path = "widgets/toggle_button.rs"]
