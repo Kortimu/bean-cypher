@@ -49,7 +49,11 @@ pub fn show_main_menu(ui: &mut egui::Ui, app: &mut TestApp) {
             if app.input == String::new() {
                 app.active_error = Some(ErrorType::EmptyInput);
             } else {
-                app.output = decode::run(&app.input, &get_default_hash()).unwrap().0;
+                if app.set_lowoutput {
+                    app.output = decode::run(&app.input, &get_default_hash()).unwrap().0.to_lowercase();
+                } else {
+                    app.output = decode::run(&app.input, &get_default_hash()).unwrap().0;
+                }
                 app.output_shown = true;
             }
         }
@@ -87,17 +91,17 @@ fn show_output(ui: &mut egui::Ui, app: &mut TestApp, output: String) {
         .show(ui, |ui| {
 
             ui.label("look at this shit");
-            egui::Frame::group(ui.style()).show(ui, |ui| {
-                if app.set_lowoutput {
-                    ui.label(output.to_lowercase());
-                } else {
-                    ui.label(output);
-                }
-            });
+            egui::ScrollArea::vertical()
+                .max_height(250.0)
+                .show(ui, |ui| {
+                    egui::Frame::group(ui.style()).show(ui, |ui| {
+                        ui.label(output.clone());
+                    });
+                });
 
             ui.columns(2, |cols| {
                 if cols[0].button("copy").clicked() {
-                    cols[0].copy_text(app.output.clone());
+                    cols[0].copy_text(output);
                     app.output_shown = false;
                 }
                 if cols[1].button("save").clicked() {
