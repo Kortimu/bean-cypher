@@ -1,4 +1,4 @@
-use crate::{TestApp, toggle};
+use crate::{toggle, TestApp};
 
 pub fn show_settings(ui: &mut egui::Ui, app: &mut TestApp) {
     ui.heading("SETTINGS!!!!");

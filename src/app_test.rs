@@ -1,6 +1,6 @@
+use crate::ErrorType;
 use crate::ManualSection;
 use crate::Tab;
-use crate::ErrorType;
 
 use crate::app_test::credits::show_credits;
 use crate::app_test::cypher::show_main_menu;
@@ -8,15 +8,14 @@ use crate::app_test::manual::show_manual;
 use crate::app_test::manual::show_manual_sidebar;
 use crate::app_test::settings::show_settings;
 
-#[path = "tabs/cypher.rs"]
-mod cypher;
-#[path = "tabs/settings.rs"]
-mod settings;
-#[path = "tabs/manual.rs"]
-mod manual;
 #[path = "tabs/credits.rs"]
 mod credits;
-
+#[path = "tabs/cypher.rs"]
+mod cypher;
+#[path = "tabs/manual.rs"]
+mod manual;
+#[path = "tabs/settings.rs"]
+mod settings;
 
 /// We derive Deserialize/Serialize so we can persist app state on shutdown.
 #[derive(serde::Deserialize, serde::Serialize)]
@@ -36,7 +35,7 @@ pub struct TestApp {
     output_shown: bool,
     #[serde(skip)]
     // TODO: might want result? i dunno
-    active_error: Option<ErrorType>
+    active_error: Option<ErrorType>,
 }
 
 impl Default for TestApp {
@@ -48,9 +47,9 @@ impl Default for TestApp {
             current_tab: Tab::Cypher,
 
             set_lowoutput: false,
-            
+
             output_shown: false,
-            active_error: None
+            active_error: None,
         }
     }
 }
@@ -64,11 +63,9 @@ impl TestApp {
 
         // Load previous app state (if any).
         // Note that you must enable the `persistence` feature for this to work.
-        if let Some(storage) = cc.storage {
+        cc.storage.map_or_else(Self::default, |storage| {
             eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default()
-        } else {
-            TestApp::default()
-        }
+        })
     }
 }
 
@@ -86,26 +83,23 @@ impl eframe::App for TestApp {
         egui::Panel::top("top_panel").show_inside(ui, |ui| {
             egui::MenuBar::new().ui(ui, |ui| {
                 ui.columns(4, |cols| {
-                    let mut i = 0;
-                    for (tab, name) in [
-                        (Tab::Cypher, "cypher"),
-                        (Tab::Settings, "settings"),
-                        (Tab::Manual, "manual"),
-                        (Tab::Credits, "credits"),
-                    ] {
-                        let picked = self.current_tab == tab;
+                    for tab in [Tab::Cypher, Tab::Settings, Tab::Manual, Tab::Credits]
+                        .into_iter()
+                        .enumerate()
+                    {
+                        let picked = self.current_tab == tab.1;
 
-                        let dat_button =
-                            egui::Button::selectable(picked, egui::RichText::new(name).size(20.0));
+                        let dat_button = egui::Button::selectable(
+                            picked,
+                            egui::RichText::new(format!("{0:?}", tab.1).to_lowercase()).size(20.0),
+                        );
 
-                        if cols[i]
-                            .add_sized([cols[i].available_width(), 40.0], dat_button)
+                        if cols[tab.0]
+                            .add_sized([cols[tab.0].available_width(), 40.0], dat_button)
                             .clicked()
                         {
-                            self.current_tab = tab;
+                            self.current_tab = tab.1;
                         }
-
-                        i += 1;
                     }
                 });
             });
@@ -122,20 +116,18 @@ impl eframe::App for TestApp {
             show_manual_sidebar(ui, self);
         }
 
-        egui::CentralPanel::default().show_inside(ui, |ui| {
-            match self.current_tab {
-                Tab::Cypher => {
-                    show_main_menu(ui, self);
-                },
-                Tab::Settings => {
-                    show_settings(ui, self);
-                },
-                Tab::Manual => {
-                    show_manual(ui);
-                },
-                Tab::Credits => {
-                    show_credits(ui);
-                }
+        egui::CentralPanel::default().show_inside(ui, |ui| match self.current_tab {
+            Tab::Cypher => {
+                show_main_menu(ui, self);
+            }
+            Tab::Settings => {
+                show_settings(ui, self);
+            }
+            Tab::Manual => {
+                show_manual(ui);
+            }
+            Tab::Credits => {
+                show_credits(ui);
             }
         });
     }

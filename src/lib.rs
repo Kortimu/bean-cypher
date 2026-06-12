@@ -3,7 +3,7 @@ pub use app::BeanCypher;
 mod app_test;
 pub use app_test::TestApp;
 
-#[derive(PartialEq, serde::Deserialize, serde::Serialize)]
+#[derive(Debug, PartialEq, serde::Deserialize, serde::Serialize)]
 enum Tab {
     Cypher,
     Settings,
@@ -29,7 +29,7 @@ enum ErrorType {
     EmptyInput,
     _DecodingInputLacksInfo,
     _FailedFile,
-    Wip
+    Wip,
 }
 
 #[path = "widgets/toggle_button.rs"]
