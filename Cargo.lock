@@ -424,8 +424,11 @@ dependencies = [
  "eframe",
  "egui",
  "egui_extras",
+ "log",
  "rfd",
  "serde",
+ "wasm-bindgen-futures",
+ "web-sys",
 ]
 
 [[package]]

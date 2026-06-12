@@ -1,5 +1,6 @@
-mod app;
-pub use app::BeanCypher;
+#![allow(dead_code)]
+// mod app;
+// pub use app::BeanCypher;
 mod app_test;
 pub use app_test::TestApp;
 
