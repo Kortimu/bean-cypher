@@ -89,8 +89,17 @@ fn show_error(ui: &mut egui::Ui, app: &mut TestApp) {
 fn show_output(ui: &mut egui::Ui, app: &mut TestApp, output: String) {
     egui::Modal::new(egui::Id::new("whoopsie_daisie"))
         .show(ui, |ui| {
-
-            ui.label("look at this shit");
+            ui.horizontal(|ui| {
+                ui.label("look at this shit");
+                ui.with_layout(
+                    egui::Layout::right_to_left(egui::Align::Center),
+                    |ui| {
+                        if ui.button("🗙").clicked() {
+                            app.output_shown = false;
+                        }
+                    }
+                );
+            });
             egui::ScrollArea::vertical()
                 .max_height(250.0)
                 .show(ui, |ui| {
