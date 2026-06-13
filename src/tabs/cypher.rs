@@ -106,6 +106,7 @@ fn show_output(ui: &egui::Ui, app: &mut TestApp, output: String) {
                 }
             });
         });
+        ui.add_space(4.0);
         egui::ScrollArea::vertical()
             .max_height(250.0)
             .show(ui, |ui| {
@@ -113,7 +114,7 @@ fn show_output(ui: &egui::Ui, app: &mut TestApp, output: String) {
                     ui.label(output.clone());
                 });
             });
-
+        ui.add_space(4.0);
         ui.columns(2, |cols| {
             if cols[0].button("copy").clicked() {
                 cols[0].copy_text(output);
