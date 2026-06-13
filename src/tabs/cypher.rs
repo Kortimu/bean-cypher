@@ -42,7 +42,10 @@ pub fn show_main_menu(ui: &mut egui::Ui, app: &mut TestApp) {
     });
 
     ui.columns(2, |cols| {
-        if cols[0].button("encode").clicked() {
+        if cols[0].add_sized(
+            [cols[0].available_width(), 25.0],
+            egui::Button::new("encode text")
+        ).clicked() {
             if app.input == String::new() {
                 app.active_error = Some(ErrorType::EmptyInput);
             } else {
@@ -51,7 +54,11 @@ pub fn show_main_menu(ui: &mut egui::Ui, app: &mut TestApp) {
                 app.output_shown = true;
             }
         }
-        if cols[1].button("decode").clicked() {
+        
+        if cols[1].add_sized(
+            [cols[1].available_width(), 25.0],
+            egui::Button::new("decode beans")
+        ).clicked() {
             if app.input == String::new() {
                 app.active_error = Some(ErrorType::EmptyInput);
             } else {
@@ -88,9 +95,22 @@ fn show_error(ui: &egui::Ui, app: &mut TestApp) {
         None => "IF YOU SEE THIS SOMETHING HAS GONE SEVERELY FUCKED",
     };
 
-    egui::Modal::new(egui::Id::new("whoopsie_daisie")).show(ui, |ui| {
+    egui::Modal::new(egui::Id::new("whoopsie_daisie"))
+    .show(ui, |ui| {
+        ui.horizontal(|ui| {
+            ui.add(
+                egui::Image::new(
+                    egui::include_image!("../../assets/warning.png")
+                ).fit_to_exact_size(egui::vec2(25.0, 25.0))
+            );
+            ui.heading("ERROR!!!");
+        });
         ui.label(error_text);
-        if ui.button("aight got it bud").clicked() {
+        ui.add_space(4.0);
+        if ui.add_sized(
+            [ui.available_width(), 25.0],
+            egui::Button::new("aight got it bud")
+        ).clicked() {
             app.active_error = None;
         }
     });
@@ -116,11 +136,18 @@ fn show_output(ui: &egui::Ui, app: &mut TestApp, output: String) {
             });
         ui.add_space(4.0);
         ui.columns(2, |cols| {
-            if cols[0].button("copy").clicked() {
+            if cols[0].add_sized(
+                [cols[0].available_width(), 25.0],
+                egui::Button::new("copy to clipboard")
+            ).clicked() {
+                // FIXME: doesn't work on mobile!
                 cols[0].copy_text(output);
                 app.output_shown = false;
             }
-            if cols[1].button("save").clicked() {
+            if cols[1].add_sized(
+                [cols[0].available_width(), 25.0],
+                egui::Button::new("save as...")
+            ).clicked() {
                 app.output_shown = false;
             }
         });
