@@ -1,11 +1,14 @@
 use std::result::Result::Ok;
 
-use crate::{hash_convert::hash_conversions::id_to_string, ErrorState};
+use crate::{ErrorState, TestApp, hash_convert::hash_conversions::id_to_string};
 use std::collections::HashMap;
 
 // TODO: learn how to document some of this
 // Ok() returns the output AND warning message (if there are none, an empty string)
-pub fn run(text: &str, hash: &HashMap<usize, String>) -> Result<(String, String), ErrorState> {
+// FIXME: this shit really asking for a rewrite ngl, especially since warnings are being reworked
+// a lot of this cide will just end up useless
+// for now i'll tolerate it
+pub fn run(text: &str, hash: &HashMap<usize, String>, app: Option<&mut TestApp>) -> Result<(String, String), ErrorState> {
     let trimmed_text = text.trim();
     let mut beans = trimmed_text.split(' ');
 
@@ -32,7 +35,7 @@ pub fn run(text: &str, hash: &HashMap<usize, String>) -> Result<(String, String)
     }
 
     // compares this program's version to the version the text was encoded in
-    let warning_msg = check_version(text_major, text_minor)?;
+    let warning_msg = check_version(text_major, text_minor, app)?;
 
     let mut output = String::new();
 
@@ -47,7 +50,7 @@ pub fn run(text: &str, hash: &HashMap<usize, String>) -> Result<(String, String)
     Ok((output, warning_msg))
 }
 
-fn check_version(text_major: usize, text_minor: usize) -> Result<String, ErrorState> {
+fn check_version(text_major: usize, text_minor: usize, app: Option<&mut TestApp>) -> Result<String, ErrorState> {
     let program_major: usize;
     let program_minor: usize;
 
@@ -69,6 +72,11 @@ fn check_version(text_major: usize, text_minor: usize) -> Result<String, ErrorSt
     }
 
     if program_major != text_major || program_minor != text_minor {
+        if let Some(app) = app {
+            if app.newest_version_found.unwrap_or((0, 0)) < (text_major as u32, text_minor as u32) {
+                app.newest_version_found = Some((text_major as u32, text_minor as u32));
+            }
+        }
         return Ok(format!("Warning: the text might get decoded wrong due to mismatched versions.\nEncoded in v{text_major}.{text_minor}.x\nDecoded in v{program_major}.{program_minor}.x"));
     }
 
@@ -142,7 +150,7 @@ mod tests {
 
     #[test]
     fn decoding() {
-        let decoded_result = run("beans beans beans beanS bean5 bean beaNs beaNS beaN5 beaN beAns beAnS beAn5 beAn beANs beANS beAN5 beAN be4ns be4nS be4n5 be4n be4Ns be4NS be4N5 be4N bEans bEanS bEan5 bEan bEaNs bEaNS bEaN5 bEaN bEAns bEAnS bEAn5 bEAn bEANs bEANS bEAN5 bEAN bE4ns bE4nS bE4n5 bE4n bE4Ns bE4NS bE4N5 bE4N b3ans b3anS b3an5 b3an b3aNs b3aNS b3aN5 b3aN b3Ans b3AnS b3An5 b3An b3ANs b3ANS b3AN5 b3AN b34ns b34nS b34n5 b34n b34Ns b34NS b34N5 b34N Beans BeanS Bean5 Bean BeaNs BeaNS BeaN5 BeaN", &get_default_hash());
+        let decoded_result = run("beans beans beans beanS bean5 bean beaNs beaNS beaN5 beaN beAns beAnS beAn5 beAn beANs beANS beAN5 beAN be4ns be4nS be4n5 be4n be4Ns be4NS be4N5 be4N bEans bEanS bEan5 bEan bEaNs bEaNS bEaN5 bEaN bEAns bEAnS bEAn5 bEAn bEANs bEANS bEAN5 bEAN bE4ns bE4nS bE4n5 bE4n bE4Ns bE4NS bE4N5 bE4N b3ans b3anS b3an5 b3an b3aNs b3aNS b3aN5 b3aN b3Ans b3AnS b3An5 b3An b3ANs b3ANS b3AN5 b3AN b34ns b34nS b34n5 b34n b34Ns b34NS b34N5 b34N Beans BeanS Bean5 Bean BeaNs BeaNS BeaN5 BeaN", &get_default_hash(), None);
 
         let correct_result = String::from(
             "0123456789 AĀBCČDEĒFGĢHIĪJKĶLĻMNŅOPQRSŠTUŪVWXYZŽ!'#$%&\"()*+,-./:;<=>?@[\\]^_`{|}~",

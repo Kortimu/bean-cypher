@@ -36,6 +36,8 @@ pub struct TestApp {
     #[serde(skip)]
     // TODO: might want result? i dunno
     active_error: Option<ErrorType>,
+    // TODO: later add a patch version also, for shits and giggles
+    pub newest_version_found: Option<(u32, u32)>
 }
 
 impl Default for TestApp {
@@ -50,6 +52,7 @@ impl Default for TestApp {
 
             output_shown: false,
             active_error: None,
+            newest_version_found: None
         }
     }
 }

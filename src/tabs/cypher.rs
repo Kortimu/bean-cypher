@@ -1,12 +1,45 @@
 use crate::decode;
 use crate::encode;
+use crate::get_app_version;
 use crate::hash_convert::hash_conversions::get_default_hash;
 use crate::ErrorType;
 use crate::TestApp;
 
 pub fn show_main_menu(ui: &mut egui::Ui, app: &mut TestApp) {
-    ui.heading("CYPHER!!!!");
+    let is_mobile = ui.ctx().content_rect().width() < 600.0;
+    ui.horizontal(|ui| {
+        ui.add(
+            egui::Image::new(
+                egui::include_image!("../../assets/beano.png")
+            // nice
+            ).fit_to_exact_size(egui::vec2(69.0, 69.0))
+        );
+        ui.allocate_ui_with_layout(
+            egui::vec2(150.0, 69.0),
+            egui::Layout::top_down(egui::Align::LEFT),
+            |ui| {
+                // TODO: not dynamic
+                ui.heading("bean cypher v0.7.0");
+                // TODO: this is where a random quote could go hard
+                ui.label(egui::RichText::new("\"what a bullshit\"").italics());
+            }
+        );
 
+        if !is_mobile && app.newest_version_found.unwrap_or((0, 0)) > get_app_version().unwrap_or((0, 0)) {
+            // TODO: add a mismatch to show_output
+            // this only shows up when a newer version is noticed.
+            // yes, this is my update notification system :3
+            show_update_popup(ui, app);
+        }
+    });
+
+    // FIXME: temporary, will rework
+    if is_mobile && app.newest_version_found.unwrap_or((0, 0)) > get_app_version().unwrap_or((0, 0)) {
+        show_update_popup(ui, app);
+    }
+
+    ui.add_space(4.0);
+    
     ui.horizontal(|ui| {
         ui.set_height(150.0);
         egui::ScrollArea::vertical()
@@ -29,6 +62,7 @@ pub fn show_main_menu(ui: &mut egui::Ui, app: &mut TestApp) {
             {
                 app.input = String::new();
             }
+            // TODO: add paste button (for mobile users)
             if ui
                 .add_sized(
                     [45.0, 73.0],
@@ -63,12 +97,12 @@ pub fn show_main_menu(ui: &mut egui::Ui, app: &mut TestApp) {
                 app.active_error = Some(ErrorType::EmptyInput);
             } else {
                 if app.set_lowoutput {
-                    app.output = decode::run(&app.input, &get_default_hash())
+                    app.output = decode::run(&app.input.clone(), &get_default_hash(), Some(app))
                         .unwrap()
                         .0
                         .to_lowercase();
                 } else {
-                    app.output = decode::run(&app.input, &get_default_hash()).unwrap().0;
+                    app.output = decode::run(&app.input.clone(), &get_default_hash(), Some(app)).unwrap().0;
                 }
                 app.output_shown = true;
             }
@@ -82,6 +116,44 @@ pub fn show_main_menu(ui: &mut egui::Ui, app: &mut TestApp) {
     if app.active_error.is_some() {
         show_error(ui, app);
     }
+}
+
+fn show_update_popup(ui: &mut egui::Ui, app: &mut TestApp) {
+    egui::Frame::group(ui.style()).show(ui, |ui| {
+        ui.set_min_width(ui.available_width());
+        ui.vertical(|ui| {
+            ui.horizontal(|ui| {
+                ui.add(
+                    egui::Image::new(
+                        egui::include_image!("../../assets/warning.png")
+                    ).fit_to_exact_size(egui::vec2(30.0, 30.0))
+                );
+                ui.vertical(|ui| {
+                    ui.label(egui::RichText::new(format!("based on prior decodings, the newest version of the program is v{}.{}.x. please update to the newest version, if possible!!!", app.newest_version_found.unwrap_or((0, 0)).0.to_string(), app.newest_version_found.unwrap_or((0, 0)).1.to_string())).size(12.0));
+                });
+            });
+
+            ui.columns(2, |cols| {
+                if cols[0].add_sized(
+                    [cols[0].available_width(), 20.0],
+                    egui::Button::new("UPDATE")
+                ).clicked() {
+                    cols[0].ctx().open_url(egui::OpenUrl {
+                        url: "https://youtube.com".to_owned(),
+                        new_tab: true
+                    });
+                }
+                
+                if cols[1].add_sized(
+                    [cols[1].available_width(), 20.0],
+                    egui::Button::new("nah i'm good")
+                ).clicked() {
+                    app.newest_version_found = None;
+                }
+            });
+
+        });
+    });
 }
 
 fn show_error(ui: &egui::Ui, app: &mut TestApp) {
@@ -140,7 +212,6 @@ fn show_output(ui: &egui::Ui, app: &mut TestApp, output: String) {
                 [cols[0].available_width(), 25.0],
                 egui::Button::new("copy to clipboard")
             ).clicked() {
-                // FIXME: doesn't work on mobile!
                 cols[0].copy_text(output);
                 app.output_shown = false;
             }

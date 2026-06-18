@@ -37,6 +37,27 @@ enum ErrorType {
 mod toggle_button;
 use crate::toggle_button::toggle;
 
+fn get_app_version() -> Option<(u32, u32)> {
+    let program_major;
+    let program_minor;
+    match env!("CARGO_PKG_VERSION_MAJOR").parse() {
+        Ok(result) => program_major = result,
+        Err(error) => {
+            println!("{error}: Flawed version major value in Cargo.toml.");
+            return None;
+        }
+    }
+    match env!("CARGO_PKG_VERSION_MINOR").parse() {
+        Ok(result) => program_minor = result,
+        Err(error) => {
+            println!("{error}: Flawed version minor value in Cargo.toml.");
+            return None;
+        }
+    }
+
+    Some((program_major, program_minor))
+}
+
 // ----------------- old stuff begins here -----------------
 
 #[path = "decode.rs"]
