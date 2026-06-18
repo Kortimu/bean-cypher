@@ -25,15 +25,15 @@ pub fn show_main_menu(ui: &mut egui::Ui, app: &mut TestApp) {
             }
         );
 
+        // this only shows up when a newer version is noticed.
+        // yes, this is my update notification system :3
         if !is_mobile && app.newest_version_found.unwrap_or((0, 0)) > get_app_version().unwrap_or((0, 0)) {
-            // TODO: add a mismatch to show_output
-            // this only shows up when a newer version is noticed.
-            // yes, this is my update notification system :3
             show_update_popup(ui, app);
         }
     });
 
-    // FIXME: temporary, will rework
+    // this only shows up when a newer version is noticed.
+    // yes, this is my update notification system :3
     if is_mobile && app.newest_version_found.unwrap_or((0, 0)) > get_app_version().unwrap_or((0, 0)) {
         show_update_popup(ui, app);
     }
@@ -96,13 +96,12 @@ pub fn show_main_menu(ui: &mut egui::Ui, app: &mut TestApp) {
             if app.input == String::new() {
                 app.active_error = Some(ErrorType::EmptyInput);
             } else {
+                let response = decode::run(&app.input.clone(), &get_default_hash(), Some(app)).unwrap();
+                app.output_warning = response.1;
                 if app.set_lowoutput {
-                    app.output = decode::run(&app.input.clone(), &get_default_hash(), Some(app))
-                        .unwrap()
-                        .0
-                        .to_lowercase();
+                    app.output = response.0.to_lowercase();
                 } else {
-                    app.output = decode::run(&app.input.clone(), &get_default_hash(), Some(app)).unwrap().0;
+                    app.output = response.0;
                 }
                 app.output_shown = true;
             }
@@ -199,10 +198,29 @@ fn show_output(ui: &egui::Ui, app: &mut TestApp, output: String) {
             });
         });
         ui.add_space(4.0);
+
+        if app.output_warning != String::new() {
+            egui::Frame::group(ui.style()).show(ui, |ui| {
+                ui.set_min_width(ui.available_width());
+                ui.horizontal(|ui| {
+                    ui.add(
+                        egui::Image::new(
+                            egui::include_image!("../../assets/warning.png")
+                        ).fit_to_exact_size(egui::vec2(45.0, 45.0))
+                    );
+                    ui.vertical(|ui| {
+                        ui.label(app.output_warning.clone());
+                    });
+                });
+            });
+            ui.add_space(4.0);
+        }
+
         egui::ScrollArea::vertical()
             .max_height(250.0)
             .show(ui, |ui| {
                 egui::Frame::group(ui.style()).show(ui, |ui| {
+                    ui.set_min_width(ui.available_width());
                     ui.label(output.clone());
                 });
             });

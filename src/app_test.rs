@@ -37,7 +37,9 @@ pub struct TestApp {
     // TODO: might want result? i dunno
     active_error: Option<ErrorType>,
     // TODO: later add a patch version also, for shits and giggles
-    pub newest_version_found: Option<(u32, u32)>
+    pub newest_version_found: Option<(u32, u32)>,
+    // TODO: when rewriting decode.rs, make into a (u32, u32)
+    output_warning: String
 }
 
 impl Default for TestApp {
@@ -52,7 +54,8 @@ impl Default for TestApp {
 
             output_shown: false,
             active_error: None,
-            newest_version_found: None
+            newest_version_found: None,
+            output_warning: String::new()
         }
     }
 }
