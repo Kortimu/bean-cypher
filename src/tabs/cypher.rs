@@ -83,8 +83,10 @@ pub fn show_main_menu(ui: &mut egui::Ui, app: &mut TestApp) {
             if app.input == String::new() {
                 app.active_error = Some(ErrorType::EmptyInput);
             } else {
-                app.output = encode::run(&app.input, &get_default_hash());
+                app.newest_version_found = None;
+                app.output_warning = String::new();
 
+                app.output = encode::run(&app.input, &get_default_hash());
                 app.output_shown = true;
             }
         }
