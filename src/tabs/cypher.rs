@@ -5,6 +5,7 @@ use crate::hash_convert::hash_conversions::get_default_hash;
 use crate::ErrorType;
 use crate::TestApp;
 
+#[allow(clippy::too_many_lines)]
 pub fn show_main_menu(ui: &mut egui::Ui, app: &mut TestApp) {
     let is_mobile = ui.ctx().content_rect().width() < 600.0;
     ui.horizontal(|ui| {
@@ -107,8 +108,9 @@ pub fn show_main_menu(ui: &mut egui::Ui, app: &mut TestApp) {
             if app.input == String::new() {
                 app.active_error = Some(ErrorType::EmptyInput);
             } else {
+                // would make this make sense but i'll do that when i rewrite decode.rs
                 let response =
-                    decode::run(&app.input.clone(), &get_default_hash(), Some(app)).unwrap();
+                    decode::run(&app.input.clone(), &get_default_hash(), Some(app)).unwrap_or_else(|_| (String::new(), String::from("no worky :[")));
                 app.output_warning = response.1;
                 if app.set_lowoutput {
                     app.output = response.0.to_lowercase();
@@ -140,7 +142,7 @@ fn show_update_popup(ui: &mut egui::Ui, app: &mut TestApp) {
                     ).fit_to_exact_size(egui::vec2(30.0, 30.0))
                 );
                 ui.vertical(|ui| {
-                    ui.label(egui::RichText::new(format!("based on prior decodings, the newest version of the program is v{}.{}.x. please update to the newest version, if possible!!!", app.newest_version_found.unwrap_or((0, 0)).0.to_string(), app.newest_version_found.unwrap_or((0, 0)).1.to_string())).size(12.0));
+                    ui.label(egui::RichText::new(format!("based on prior decodings, the newest version of the program is v{}.{}.x. please update to the newest version, if possible!!!", app.newest_version_found.unwrap_or((0, 0)).0, app.newest_version_found.unwrap_or((0, 0)).1)).size(12.0));
                 });
             });
 
