@@ -25,29 +25,29 @@ enum ManualSection {
 }
 
 impl ManualSection {
-    pub fn label(&self) -> &'static str {
+    pub const fn label(self) -> &'static str {
         match self {
-            ManualSection::Intro => "introduction",
-            ManualSection::Basics => "cypher basics",
-            ManualSection::Explanation => "how the cypher works",
-            ManualSection::CustomCyphers => "custom cyphers",
-            ManualSection::Edge => "E.D.G.E.",
-            ManualSection::Faq => "FAQ",
-            ManualSection::Thanks => "thanks",
-            ManualSection::Sillies => "stupid bean images",
+            Self::Intro => "introduction",
+            Self::Basics => "cypher basics",
+            Self::Explanation => "how the cypher works",
+            Self::CustomCyphers => "custom cyphers",
+            Self::Edge => "E.D.G.E.",
+            Self::Faq => "FAQ",
+            Self::Thanks => "thanks",
+            Self::Sillies => "stupid bean images",
         }
     }
 
-    pub fn file_path(&self) -> &'static str {
+    pub const fn file_path(self) -> &'static str {
         match self {
-            ManualSection::Intro => include_str!("../assets/manual/01-intro.md"),
-            ManualSection::Basics => include_str!("../assets/manual/02-basics.md"),
-            ManualSection::Explanation => include_str!("../assets/manual/03-explanation.md"),
-            ManualSection::CustomCyphers => include_str!("../assets/manual/04-custom_cyphers.md"),
-            ManualSection::Edge => include_str!("../assets/manual/05-edge.md"),
-            ManualSection::Faq => include_str!("../assets/manual/06-faq.md"),
-            ManualSection::Thanks => include_str!("../assets/manual/07-thanks.md"),
-            ManualSection::Sillies => include_str!("../assets/manual/08-sillies.md"),
+            Self::Intro => include_str!("../assets/manual/01-intro.md"),
+            Self::Basics => include_str!("../assets/manual/02-basics.md"),
+            Self::Explanation => include_str!("../assets/manual/03-explanation.md"),
+            Self::CustomCyphers => include_str!("../assets/manual/04-custom_cyphers.md"),
+            Self::Edge => include_str!("../assets/manual/05-edge.md"),
+            Self::Faq => include_str!("../assets/manual/06-faq.md"),
+            Self::Thanks => include_str!("../assets/manual/07-thanks.md"),
+            Self::Sillies => include_str!("../assets/manual/08-sillies.md"),
         }
     }
 }
@@ -64,22 +64,20 @@ mod toggle_button;
 use crate::toggle_button::toggle;
 
 fn get_app_version() -> Option<(u32, u32)> {
-    let program_major;
-    let program_minor;
-    match env!("CARGO_PKG_VERSION_MAJOR").parse() {
-        Ok(result) => program_major = result,
+    let program_major = match env!("CARGO_PKG_VERSION_MAJOR").parse() {
+        Ok(result) => result,
         Err(error) => {
             println!("{error}: Flawed version major value in Cargo.toml.");
             return None;
         }
-    }
-    match env!("CARGO_PKG_VERSION_MINOR").parse() {
-        Ok(result) => program_minor = result,
+    };
+    let program_minor = match env!("CARGO_PKG_VERSION_MINOR").parse() {
+        Ok(result) => result,
         Err(error) => {
             println!("{error}: Flawed version minor value in Cargo.toml.");
             return None;
         }
-    }
+    };
 
     Some((program_major, program_minor))
 }

@@ -39,7 +39,7 @@ pub fn show_manual_sidebar(ui: &mut egui::Ui, app: &mut TestApp) {
     });
 }
 
-pub fn show_manual(ui: &mut egui::Ui, app: &mut TestApp) {
+pub fn show_manual(ui: &mut egui::Ui, app: &TestApp) {
     egui::ScrollArea::vertical().show(ui, |ui| {
         egui::Frame::group(ui.style()).show(ui, |ui| {
             ui.allocate_ui_with_layout(
