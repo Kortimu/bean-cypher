@@ -1,6 +1,6 @@
 use std::result::Result::Ok;
 
-use crate::{ErrorState, TestApp, hash_convert::hash_conversions::id_to_string};
+use crate::{hash_convert::hash_conversions::id_to_string, ErrorState, TestApp};
 use std::collections::HashMap;
 
 // TODO: learn how to document some of this
@@ -8,7 +8,11 @@ use std::collections::HashMap;
 // FIXME: this shit really asking for a rewrite ngl, especially since warnings are being reworked
 // a lot of this cide will just end up useless
 // for now i'll tolerate it
-pub fn run(text: &str, hash: &HashMap<usize, String>, app: Option<&mut TestApp>) -> Result<(String, String), ErrorState> {
+pub fn run(
+    text: &str,
+    hash: &HashMap<usize, String>,
+    app: Option<&mut TestApp>,
+) -> Result<(String, String), ErrorState> {
     let trimmed_text = text.trim();
     let mut beans = trimmed_text.split(' ');
 
@@ -50,7 +54,11 @@ pub fn run(text: &str, hash: &HashMap<usize, String>, app: Option<&mut TestApp>)
     Ok((output, warning_msg))
 }
 
-fn check_version(text_major: usize, text_minor: usize, app: Option<&mut TestApp>) -> Result<String, ErrorState> {
+fn check_version(
+    text_major: usize,
+    text_minor: usize,
+    app: Option<&mut TestApp>,
+) -> Result<String, ErrorState> {
     let program_major: usize;
     let program_minor: usize;
 

@@ -1,8 +1,8 @@
-use crate::ENGLISH;
 use crate::ErrorType;
 use crate::Language;
 use crate::ManualSection;
 use crate::Tab;
+use crate::ENGLISH;
 
 use crate::app_test::credits::show_credits;
 use crate::app_test::cypher::show_main_menu;
@@ -44,7 +44,7 @@ pub struct TestApp {
     // TODO: later add a patch version also, for shits and giggles
     pub newest_version_found: Option<(u32, u32)>,
     // TODO: when rewriting decode.rs, make into a (u32, u32)
-    output_warning: String
+    output_warning: String,
 }
 
 impl Default for TestApp {
@@ -61,7 +61,7 @@ impl Default for TestApp {
             output_shown: false,
             active_error: None,
             newest_version_found: None,
-            output_warning: String::new()
+            output_warning: String::new(),
         }
     }
 }
@@ -75,10 +75,8 @@ impl TestApp {
 
         egui_extras::install_image_loaders(&cc.egui_ctx);
 
-        cc.egui_ctx.include_bytes(
-            "bytes://funi",
-            include_bytes!("../assets/funny_image.png")
-        );
+        cc.egui_ctx
+            .include_bytes("bytes://funi", include_bytes!("../assets/funny_image.png"));
 
         // Load previous app state (if any).
         // Note that you must enable the `persistence` feature for this to work.

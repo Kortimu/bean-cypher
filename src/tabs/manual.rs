@@ -1,5 +1,5 @@
-use egui_commonmark::CommonMarkViewer;
 use egui_commonmark::CommonMarkCache;
+use egui_commonmark::CommonMarkViewer;
 
 use crate::ManualSection;
 use crate::TestApp;
@@ -24,13 +24,13 @@ pub fn show_manual_sidebar(ui: &mut egui::Ui, app: &mut TestApp) {
                                 ManualSection::Faq,
                                 ManualSection::Thanks,
                                 ManualSection::Sillies,
-                            ] { 
+                            ] {
                                 ui.style_mut().spacing.button_padding = egui::vec2(12.0, 8.0);
                                 ui.selectable_value(
                                     &mut app.manual_section,
                                     section,
                                     section.label(),
-                                );      
+                                );
                             }
                         });
                 });

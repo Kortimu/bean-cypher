@@ -4,7 +4,7 @@ pub fn show_credits(ui: &mut egui::Ui) {
         egui::Layout::top_down(egui::Align::Center),
         |ui| {
             ui.set_max_width(350.0);
-            
+
             ui.horizontal(|ui| {
                 ui.add(
                     egui::Image::new(
@@ -31,7 +31,7 @@ pub fn show_credits(ui: &mut egui::Ui) {
                     });
                 })
             });
-        
+
             ui.with_layout(egui::Layout::right_to_left(egui::Align::TOP), |ui| {
                 ui.add(
                     egui::Image::new(

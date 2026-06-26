@@ -10,9 +10,9 @@ pub fn show_main_menu(ui: &mut egui::Ui, app: &mut TestApp) {
     ui.horizontal(|ui| {
         ui.add(
             egui::Image::new(
-                egui::include_image!("../../assets/beano.png")
-            // nice
-            ).fit_to_exact_size(egui::vec2(69.0, 69.0))
+                egui::include_image!("../../assets/beano.png"), // nice
+            )
+            .fit_to_exact_size(egui::vec2(69.0, 69.0)),
         );
         ui.allocate_ui_with_layout(
             egui::vec2(150.0, 69.0),
@@ -22,24 +22,27 @@ pub fn show_main_menu(ui: &mut egui::Ui, app: &mut TestApp) {
                 ui.heading("bean cypher v0.7.0");
                 // TODO: this is where a random quote could go hard
                 ui.label(egui::RichText::new("\"what a bullshit\"").italics());
-            }
+            },
         );
 
         // this only shows up when a newer version is noticed.
         // yes, this is my update notification system :3
-        if !is_mobile && app.newest_version_found.unwrap_or((0, 0)) > get_app_version().unwrap_or((0, 0)) {
+        if !is_mobile
+            && app.newest_version_found.unwrap_or((0, 0)) > get_app_version().unwrap_or((0, 0))
+        {
             show_update_popup(ui, app);
         }
     });
 
     // this only shows up when a newer version is noticed.
     // yes, this is my update notification system :3
-    if is_mobile && app.newest_version_found.unwrap_or((0, 0)) > get_app_version().unwrap_or((0, 0)) {
+    if is_mobile && app.newest_version_found.unwrap_or((0, 0)) > get_app_version().unwrap_or((0, 0))
+    {
         show_update_popup(ui, app);
     }
 
     ui.add_space(4.0);
-    
+
     ui.horizontal(|ui| {
         ui.set_height(150.0);
         egui::ScrollArea::vertical()
@@ -76,10 +79,13 @@ pub fn show_main_menu(ui: &mut egui::Ui, app: &mut TestApp) {
     });
 
     ui.columns(2, |cols| {
-        if cols[0].add_sized(
-            [cols[0].available_width(), 25.0],
-            egui::Button::new("encode text")
-        ).clicked() {
+        if cols[0]
+            .add_sized(
+                [cols[0].available_width(), 25.0],
+                egui::Button::new("encode text"),
+            )
+            .clicked()
+        {
             if app.input == String::new() {
                 app.active_error = Some(ErrorType::EmptyInput);
             } else {
@@ -90,15 +96,19 @@ pub fn show_main_menu(ui: &mut egui::Ui, app: &mut TestApp) {
                 app.output_shown = true;
             }
         }
-        
-        if cols[1].add_sized(
-            [cols[1].available_width(), 25.0],
-            egui::Button::new("decode beans")
-        ).clicked() {
+
+        if cols[1]
+            .add_sized(
+                [cols[1].available_width(), 25.0],
+                egui::Button::new("decode beans"),
+            )
+            .clicked()
+        {
             if app.input == String::new() {
                 app.active_error = Some(ErrorType::EmptyInput);
             } else {
-                let response = decode::run(&app.input.clone(), &get_default_hash(), Some(app)).unwrap();
+                let response =
+                    decode::run(&app.input.clone(), &get_default_hash(), Some(app)).unwrap();
                 app.output_warning = response.1;
                 if app.set_lowoutput {
                     app.output = response.0.to_lowercase();
@@ -144,7 +154,7 @@ fn show_update_popup(ui: &mut egui::Ui, app: &mut TestApp) {
                         new_tab: true
                     });
                 }
-                
+
                 if cols[1].add_sized(
                     [cols[1].available_width(), 20.0],
                     egui::Button::new("nah i'm good")
@@ -168,22 +178,23 @@ fn show_error(ui: &egui::Ui, app: &mut TestApp) {
         None => "IF YOU SEE THIS SOMETHING HAS GONE SEVERELY FUCKED",
     };
 
-    egui::Modal::new(egui::Id::new("whoopsie_daisie"))
-    .show(ui, |ui| {
+    egui::Modal::new(egui::Id::new("whoopsie_daisie")).show(ui, |ui| {
         ui.horizontal(|ui| {
             ui.add(
-                egui::Image::new(
-                    egui::include_image!("../../assets/warning.png")
-                ).fit_to_exact_size(egui::vec2(25.0, 25.0))
+                egui::Image::new(egui::include_image!("../../assets/warning.png"))
+                    .fit_to_exact_size(egui::vec2(25.0, 25.0)),
             );
             ui.heading("ERROR!!!");
         });
         ui.label(error_text);
         ui.add_space(4.0);
-        if ui.add_sized(
-            [ui.available_width(), 25.0],
-            egui::Button::new("aight got it bud")
-        ).clicked() {
+        if ui
+            .add_sized(
+                [ui.available_width(), 25.0],
+                egui::Button::new("aight got it bud"),
+            )
+            .clicked()
+        {
             app.active_error = None;
         }
     });
@@ -206,9 +217,8 @@ fn show_output(ui: &egui::Ui, app: &mut TestApp, output: String) {
                 ui.set_min_width(ui.available_width());
                 ui.horizontal(|ui| {
                     ui.add(
-                        egui::Image::new(
-                            egui::include_image!("../../assets/warning.png")
-                        ).fit_to_exact_size(egui::vec2(45.0, 45.0))
+                        egui::Image::new(egui::include_image!("../../assets/warning.png"))
+                            .fit_to_exact_size(egui::vec2(45.0, 45.0)),
                     );
                     ui.vertical(|ui| {
                         ui.label(app.output_warning.clone());
@@ -228,17 +238,23 @@ fn show_output(ui: &egui::Ui, app: &mut TestApp, output: String) {
             });
         ui.add_space(4.0);
         ui.columns(2, |cols| {
-            if cols[0].add_sized(
-                [cols[0].available_width(), 25.0],
-                egui::Button::new("copy to clipboard")
-            ).clicked() {
+            if cols[0]
+                .add_sized(
+                    [cols[0].available_width(), 25.0],
+                    egui::Button::new("copy to clipboard"),
+                )
+                .clicked()
+            {
                 cols[0].copy_text(output);
                 app.output_shown = false;
             }
-            if cols[1].add_sized(
-                [cols[0].available_width(), 25.0],
-                egui::Button::new("save as...")
-            ).clicked() {
+            if cols[1]
+                .add_sized(
+                    [cols[0].available_width(), 25.0],
+                    egui::Button::new("save as..."),
+                )
+                .clicked()
+            {
                 app.output_shown = false;
             }
         });
