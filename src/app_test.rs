@@ -1,4 +1,6 @@
+use crate::ENGLISH;
 use crate::ErrorType;
+use crate::Language;
 use crate::ManualSection;
 use crate::Tab;
 
@@ -27,6 +29,9 @@ pub struct TestApp {
     #[serde(skip)]
     current_tab: Tab,
     manual_section: ManualSection,
+    // TODO: one day figure out how to remove this
+    #[serde(skip)]
+    manual_lang: Language,
 
     set_lowoutput: bool,
 
@@ -47,8 +52,9 @@ impl Default for TestApp {
         Self {
             input: String::new(),
             output: String::new(),
-            manual_section: ManualSection::Intro,
             current_tab: Tab::Cypher,
+            manual_section: ManualSection::Intro,
+            manual_lang: ENGLISH,
 
             set_lowoutput: false,
 
@@ -68,6 +74,11 @@ impl TestApp {
         // `cc.egui_ctx.set_visuals` and `cc.egui_ctx.set_fonts`.
 
         egui_extras::install_image_loaders(&cc.egui_ctx);
+
+        cc.egui_ctx.include_bytes(
+            "bytes://funi",
+            include_bytes!("../assets/funny_image.png")
+        );
 
         // Load previous app state (if any).
         // Note that you must enable the `persistence` feature for this to work.
@@ -132,7 +143,7 @@ impl eframe::App for TestApp {
                 show_settings(ui, self);
             }
             Tab::Manual => {
-                show_manual(ui);
+                show_manual(ui, self);
             }
             Tab::Credits => {
                 show_credits(ui);

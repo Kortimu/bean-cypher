@@ -15,15 +15,41 @@ enum Tab {
 #[derive(Clone, Copy, Debug, PartialEq, serde::Deserialize, serde::Serialize)]
 enum ManualSection {
     Intro,
-    Vision,
-    Encrypting,
-    Decrypting,
-    Settings,
-    FileShenanigans,
-    Roadmap,
+    Basics,
+    Explanation,
+    CustomCyphers,
+    Edge,
     Faq,
     Thanks,
-    Social,
+    Sillies,
+}
+
+impl ManualSection {
+    pub fn label(&self) -> &'static str {
+        match self {
+            ManualSection::Intro => "introduction",
+            ManualSection::Basics => "cypher basics",
+            ManualSection::Explanation => "how the cypher works",
+            ManualSection::CustomCyphers => "custom cyphers",
+            ManualSection::Edge => "E.D.G.E.",
+            ManualSection::Faq => "FAQ",
+            ManualSection::Thanks => "thanks",
+            ManualSection::Sillies => "stupid bean images",
+        }
+    }
+
+    pub fn file_path(&self) -> &'static str {
+        match self {
+            ManualSection::Intro => include_str!("../assets/manual/01-intro.md"),
+            ManualSection::Basics => include_str!("../assets/manual/02-basics.md"),
+            ManualSection::Explanation => include_str!("../assets/manual/03-explanation.md"),
+            ManualSection::CustomCyphers => include_str!("../assets/manual/04-custom_cyphers.md"),
+            ManualSection::Edge => include_str!("../assets/manual/05-edge.md"),
+            ManualSection::Faq => include_str!("../assets/manual/06-faq.md"),
+            ManualSection::Thanks => include_str!("../assets/manual/07-thanks.md"),
+            ManualSection::Sillies => include_str!("../assets/manual/08-sillies.md"),
+        }
+    }
 }
 
 enum ErrorType {
