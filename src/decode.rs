@@ -81,8 +81,16 @@ fn check_version(
 
     if program_major != text_major || program_minor != text_minor {
         if let Some(app) = app {
-            if app.newest_version_found.unwrap_or((0, 0)) < (u32::try_from(text_major).unwrap_or(0), u32::try_from(text_minor).unwrap_or(0)) {
-                app.newest_version_found = Some((u32::try_from(text_major).unwrap_or(0), u32::try_from(text_minor).unwrap_or(0)));
+            if app.newest_version_found.unwrap_or((0, 0))
+                < (
+                    u32::try_from(text_major).unwrap_or(0),
+                    u32::try_from(text_minor).unwrap_or(0),
+                )
+            {
+                app.newest_version_found = Some((
+                    u32::try_from(text_major).unwrap_or(0),
+                    u32::try_from(text_minor).unwrap_or(0),
+                ));
             }
         }
         return Ok(format!("Warning: the text might get decoded wrong due to mismatched versions.\nEncoded in v{text_major}.{text_minor}.x\nDecoded in v{program_major}.{program_minor}.x"));

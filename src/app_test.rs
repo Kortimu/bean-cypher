@@ -77,6 +77,26 @@ impl TestApp {
 
         cc.egui_ctx
             .include_bytes("bytes://funi", include_bytes!("../assets/funny_image.png"));
+        cc.egui_ctx.include_bytes(
+            "bytes://tutorial",
+            include_bytes!("../assets/cypher_tutorial.png"),
+        );
+        cc.egui_ctx.include_bytes(
+            "bytes://funi_stret",
+            include_bytes!("../assets/street_beans.jpg"),
+        );
+        cc.egui_ctx.include_bytes(
+            "bytes://funi_gun",
+            include_bytes!("../assets/gun_beans.jpg"),
+        );
+        cc.egui_ctx.include_bytes(
+            "bytes://funi_huh",
+            include_bytes!("../assets/huh_beans.jpg"),
+        );
+        cc.egui_ctx.include_bytes(
+            "bytes://funi_clen",
+            include_bytes!("../assets/clean_beans.jpg"),
+        );
 
         // Load previous app state (if any).
         // Note that you must enable the `persistence` feature for this to work.

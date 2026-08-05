@@ -1,7 +1,7 @@
 # look at some of these bangers
 
-example image
-
 ![](bytes://funi)
-
-but in general it'll just be full of really silly images
+![](bytes://funi_stret)
+![](bytes://funi_gun)
+![](bytes://funi_huh)
+![](bytes://funi_clen)

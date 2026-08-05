@@ -18,7 +18,7 @@ serde = "1.0.228"
 log = "0.4.27"
 egui_commonmark = "0.23.0"
 # Specify what image formats you want to use
-image = { version = "0.25", default-features = false, features = ["png"] }
+image = { version = "0.25", default-features = false, features = ["png", "jpeg"] }
 
 # web:
 [target.'cfg(target_arch = "wasm32")'.dependencies]

@@ -109,8 +109,8 @@ pub fn show_main_menu(ui: &mut egui::Ui, app: &mut TestApp) {
                 app.active_error = Some(ErrorType::EmptyInput);
             } else {
                 // would make this make sense but i'll do that when i rewrite decode.rs
-                let response =
-                    decode::run(&app.input.clone(), &get_default_hash(), Some(app)).unwrap_or_else(|_| (String::new(), String::from("no worky :[")));
+                let response = decode::run(&app.input.clone(), &get_default_hash(), Some(app))
+                    .unwrap_or_else(|_| (String::new(), String::from("no worky :[")));
                 app.output_warning = response.1;
                 if app.set_lowoutput {
                     app.output = response.0.to_lowercase();
