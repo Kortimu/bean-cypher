@@ -1,3 +1,5 @@
+use egui_i18n::tr;
+
 pub fn show_credits(ui: &mut egui::Ui) {
     ui.allocate_ui_with_layout(
         ui.available_size(),
@@ -14,15 +16,15 @@ pub fn show_credits(ui: &mut egui::Ui) {
                 ui.vertical(|ui| {
                     ui.heading(format!("bean cypher alpha v{}", env!("CARGO_PKG_VERSION")));
                     ui.horizontal(|ui| {
-                        ui.label("evil mastermind behind this:");
+                        ui.label(tr!("credits_kortimu"));
                         ui.hyperlink_to("kortimu :]", "https://kortimu.github.io");
                     });
                     ui.horizontal(|ui| {
-                        ui.label("chief bean officer (cbo):");
+                        ui.label(tr!("credits_bean"));
                         ui.hyperlink_to("bean man", "https://twitch.tv/beandhd");
                     });
                     ui.horizontal(|ui| {
-                        ui.label("enabler of this:");
+                        ui.label(tr!("credits_laptop"));
                         ui.hyperlink_to("acer extensa 215-55", "https://www.google.com/search?q=some+laptop+i+found+or+something+i+dunno&tbm=isch");
                     });
                     ui.horizontal(|ui| {
@@ -40,13 +42,13 @@ pub fn show_credits(ui: &mut egui::Ui) {
                 );
                 ui.vertical(|ui| {
                     ui.with_layout(egui::Layout::top_down(egui::Align::Max), |ui| {
-                        ui.label("additional thanks to:");
+                        ui.label(tr!("credits_bonus"));
                         ui.horizontal(|ui| {
-                            ui.label("for being awesome");
+                            ui.label(tr!("credits_bonus_awesome"));
                             ui.hyperlink_to("n0o0b090lv", "https://youtube.com");
                         });
                         ui.horizontal(|ui| {
-                            ui.label("for being awesome");
+                            ui.label(tr!("credits_bonus_awesome"));
                             ui.hyperlink_to("Makazis", "https://youtube.com");
                         });
                         ui.label("and to any translators i pick up");

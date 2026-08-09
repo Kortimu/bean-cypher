@@ -98,12 +98,33 @@ impl TestApp {
             include_bytes!("../assets/clean_beans.jpg"),
         );
 
+        init_i18n();
+
         // Load previous app state (if any).
         // Note that you must enable the `persistence` feature for this to work.
         cc.storage.map_or_else(Self::default, |storage| {
             eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default()
         })
     }
+}
+
+fn init_i18n() {
+    // On Windows, Fluent wraps placeables in Unicode directionality marks
+    // (U+2068 / U+2069) that some native text renderers display as garbage.
+    // Disable them before loading any bundles.
+    #[cfg(target_os = "windows")]
+    egui_i18n::set_use_isolating(false);
+
+    let en = include_str!("../assets/lang/en-GB.ftl");
+
+    match egui_i18n::load_translations_from_text("en-GB", en) {
+        Ok(()) => {}
+        Err(err) => eprintln!("Failed to load en-GB translations: {err}"),
+    }
+    // egui_i18n::load_translations_from_text("en-US", en).unwrap();
+
+    egui_i18n::set_language("en-GB");
+    egui_i18n::set_fallback("en-GB");
 }
 
 impl eframe::App for TestApp {

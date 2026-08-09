@@ -1,3 +1,4 @@
+use egui_i18n::tr;
 use std::result::Result::Ok;
 
 use crate::{hash_convert::hash_conversions::id_to_string, ErrorState, TestApp};
@@ -93,7 +94,9 @@ fn check_version(
                 ));
             }
         }
-        return Ok(format!("Warning: the text might get decoded wrong due to mismatched versions.\nEncoded in v{text_major}.{text_minor}.x\nDecoded in v{program_major}.{program_minor}.x"));
+        return Ok(
+            tr!("output_mismatch", { text_minor: text_minor, text_major: text_major, program_major: program_major, program_minor: program_minor }),
+        );
     }
 
     Ok(String::new())
