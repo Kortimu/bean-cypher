@@ -1,10 +1,3 @@
-welcome = Welcome to the app!
-hello-name = Hello, { $name }!
-item-count =
-    { $count ->
-        [one] One item
-       *[other] { $count } items
-    }
 lang_name = english
 app_name = bean cypher
 
@@ -40,6 +33,7 @@ error_what = IF YOU SEE THIS SOMEHOW, SOMETHING HAS GONE SEVERELY WRONG
 
 set_theme = theme
 set_lowercase = lowercase output
+set_lang = language
 
 credits_kortimu = evil mastermind behind this:
 ## feel free to adjust this bit to what is a valid high level profession that is beans related

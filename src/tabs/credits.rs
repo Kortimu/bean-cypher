@@ -14,7 +14,7 @@ pub fn show_credits(ui: &mut egui::Ui) {
                     ).fit_to_exact_size(egui::vec2(105.0, 105.0))
                 );
                 ui.vertical(|ui| {
-                    ui.heading(format!("bean cypher alpha v{}", env!("CARGO_PKG_VERSION")));
+                    ui.heading(format!("{} alpha v{}", tr!("app_name"), env!("CARGO_PKG_VERSION")));
                     ui.horizontal(|ui| {
                         ui.label(tr!("credits_kortimu"));
                         ui.hyperlink_to("kortimu :]", "https://kortimu.github.io");
@@ -28,8 +28,8 @@ pub fn show_credits(ui: &mut egui::Ui) {
                         ui.hyperlink_to("acer extensa 215-55", "https://www.google.com/search?q=some+laptop+i+found+or+something+i+dunno&tbm=isch");
                     });
                     ui.horizontal(|ui| {
-                        ui.hyperlink_to(" source code", "https://github.com/Kortimu/bean-cypher");
-                        ui.hyperlink_to("🎶 gensokyo radio", "https://gensokyoradio.net");
+                        ui.hyperlink_to(tr!("credits_source"), "https://github.com/Kortimu/bean-cypher");
+                        ui.hyperlink_to(tr!("credits_radio"), "https://gensokyoradio.net");
                     });
                 })
             });

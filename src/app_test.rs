@@ -3,6 +3,7 @@ use crate::Language;
 use crate::ManualSection;
 use crate::Tab;
 use crate::ENGLISH;
+use egui_i18n::tr;
 
 use crate::app_test::credits::show_credits;
 use crate::app_test::cypher::show_main_menu;
@@ -34,6 +35,7 @@ pub struct TestApp {
     manual_lang: Language,
 
     set_lowoutput: bool,
+    set_lang: String,
 
     #[serde(skip)]
     // TODO: might wanna merge with active_error -> active_result
@@ -57,6 +59,7 @@ impl Default for TestApp {
             manual_lang: ENGLISH,
 
             set_lowoutput: false,
+            set_lang: String::new(),
 
             output_shown: false,
             active_error: None,
@@ -98,7 +101,9 @@ impl TestApp {
             include_bytes!("../assets/clean_beans.jpg"),
         );
 
-        init_i18n();
+        if let Err(err) = init_i18n() {
+            eprintln!("error with i18n initialization: {err}");
+        }
 
         // Load previous app state (if any).
         // Note that you must enable the `persistence` feature for this to work.
@@ -108,23 +113,18 @@ impl TestApp {
     }
 }
 
-fn init_i18n() {
+fn init_i18n() -> Result<(), Box<dyn std::error::Error>> {
     // On Windows, Fluent wraps placeables in Unicode directionality marks
     // (U+2068 / U+2069) that some native text renderers display as garbage.
     // Disable them before loading any bundles.
     #[cfg(target_os = "windows")]
     egui_i18n::set_use_isolating(false);
 
-    let en = include_str!("../assets/lang/en-GB.ftl");
-
-    match egui_i18n::load_translations_from_text("en-GB", en) {
-        Ok(()) => {}
-        Err(err) => eprintln!("Failed to load en-GB translations: {err}"),
-    }
-    // egui_i18n::load_translations_from_text("en-US", en).unwrap();
+    egui_i18n::load_translations_from_path("assets/lang")?;
 
     egui_i18n::set_language("en-GB");
     egui_i18n::set_fallback("en-GB");
+    Ok(())
 }
 
 impl eframe::App for TestApp {
@@ -149,7 +149,7 @@ impl eframe::App for TestApp {
 
                         let dat_button = egui::Button::selectable(
                             picked,
-                            egui::RichText::new(format!("{0:?}", tab.1).to_lowercase()).size(20.0),
+                            egui::RichText::new(tr!(&format!("tab_{0:?}", tab.1).to_lowercase())).size(20.0),
                         );
 
                         if cols[tab.0]
