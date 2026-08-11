@@ -86,12 +86,13 @@ fn load_flag(ctx: &egui::Context, lang: &str) -> egui::TextureHandle {
     let path = format!("assets/{lang}.png");
 
     let bytes = std::fs::read(path).expect("reading failed for flag :<");
-    let image = image::load_from_memory(&bytes).expect("loading from memory failed for flag :<").to_rgba8();
+    let image = image::load_from_memory(&bytes)
+        .expect("loading from memory failed for flag :<")
+        .to_rgba8();
 
     let size = [image.width() as usize, image.height() as usize];
 
-    let color_image =
-        egui::ColorImage::from_rgba_unmultiplied(size, &image);
+    let color_image = egui::ColorImage::from_rgba_unmultiplied(size, &image);
 
     ctx.load_texture(
         format!("flag_{lang}"),

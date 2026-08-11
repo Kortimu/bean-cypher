@@ -36,6 +36,7 @@ pub struct TestApp {
 
     set_lowoutput: bool,
     set_lang: String,
+    set_theme: egui::ThemePreference,
 
     #[serde(skip)]
     // TODO: might wanna merge with active_error -> active_result
@@ -59,7 +60,8 @@ impl Default for TestApp {
             manual_lang: ENGLISH,
 
             set_lowoutput: false,
-            set_lang: String::new(),
+            set_lang: egui_i18n::get_language(),
+            set_theme: egui::ThemePreference::System,
 
             output_shown: false,
             active_error: None,
@@ -101,19 +103,21 @@ impl TestApp {
             include_bytes!("../assets/clean_beans.jpg"),
         );
 
-        if let Err(err) = init_i18n() {
+        // Load previous app state (if any).
+        // Note that you must enable the `persistence` feature for this to work.
+        let app = cc.storage.map_or_else(Self::default, |storage| {
+            eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default()
+        });
+
+        if let Err(err) = init_i18n(&app.set_lang) {
             eprintln!("error with i18n initialization: {err}");
         }
 
-        // Load previous app state (if any).
-        // Note that you must enable the `persistence` feature for this to work.
-        cc.storage.map_or_else(Self::default, |storage| {
-            eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default()
-        })
+        app
     }
 }
 
-fn init_i18n() -> Result<(), Box<dyn std::error::Error>> {
+fn init_i18n(lang: &str) -> Result<(), Box<dyn std::error::Error>> {
     // On Windows, Fluent wraps placeables in Unicode directionality marks
     // (U+2068 / U+2069) that some native text renderers display as garbage.
     // Disable them before loading any bundles.
@@ -122,7 +126,7 @@ fn init_i18n() -> Result<(), Box<dyn std::error::Error>> {
 
     egui_i18n::load_translations_from_path("assets/lang")?;
 
-    egui_i18n::set_language("en-GB");
+    egui_i18n::set_language(lang);
     egui_i18n::set_fallback("en-GB");
     Ok(())
 }
@@ -149,7 +153,8 @@ impl eframe::App for TestApp {
 
                         let dat_button = egui::Button::selectable(
                             picked,
-                            egui::RichText::new(tr!(&format!("tab_{0:?}", tab.1).to_lowercase())).size(20.0),
+                            egui::RichText::new(tr!(&format!("tab_{0:?}", tab.1).to_lowercase()))
+                                .size(20.0),
                         );
 
                         if cols[tab.0]
