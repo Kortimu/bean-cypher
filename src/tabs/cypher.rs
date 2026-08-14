@@ -97,7 +97,12 @@ pub fn show_main_menu(ui: &mut egui::Ui, app: &mut TestApp) {
                 app.newest_version_found = None;
                 app.output_warning = String::new();
 
-                app.output = encode::run(&app.input, &get_default_hash());
+                app.output = encode::run(
+                    &app.input,
+                    &get_default_hash(),
+                    app.set_edge,
+                    app.set_edge_link.clone(),
+                );
                 app.output_shown = true;
             }
         }

@@ -9,14 +9,21 @@ pub fn show_settings(ui: &mut egui::Ui, app: &mut TestApp) {
             ui.set_max_width(300.0);
 
             ui.horizontal(|ui| {
-                ui.label(tr!("set_lowercase"));
+                ui.label(tr!("set_theme"));
+                // i could set the theme every frame but eh, why not optimize
+                let theme_setting_of_before = app.set_theme;
                 ui.allocate_ui_with_layout(
                     ui.available_size(),
                     egui::Layout::right_to_left(egui::Align::Center),
                     |ui| {
-                        ui.add(toggle(&mut app.set_lowoutput));
+                        app.set_theme.radio_buttons(ui);
                     },
                 );
+                if theme_setting_of_before != app.set_theme {
+                    ui.ctx().options_mut(|o| {
+                        o.theme_preference = app.set_theme;
+                    });
+                }
             });
 
             ui.horizontal(|ui| {
@@ -52,16 +59,48 @@ pub fn show_settings(ui: &mut egui::Ui, app: &mut TestApp) {
             });
 
             ui.horizontal(|ui| {
-                ui.label(tr!("set_theme"));
-                // i could set the theme every frame but eh, why not optimize
-                let theme_setting_of_before = app.set_theme;
-                app.set_theme.radio_buttons(ui);
-                if theme_setting_of_before != app.set_theme {
-                    ui.ctx().options_mut(|o| {
-                        o.theme_preference = app.set_theme;
-                    });
-                }
+                ui.label(tr!("set_lowercase"));
+                ui.allocate_ui_with_layout(
+                    ui.available_size(),
+                    egui::Layout::right_to_left(egui::Align::Center),
+                    |ui| {
+                        ui.add(toggle(&mut app.set_lowoutput));
+                    },
+                );
             });
+
+            ui.separator();
+
+            ui.horizontal(|ui| {
+                ui.label("set_edge");
+                ui.allocate_ui_with_layout(
+                    ui.available_size(),
+                    egui::Layout::right_to_left(egui::Align::Center),
+                    |ui| {
+                        ui.checkbox(&mut app.set_edge, "");
+                    },
+                );
+            });
+
+            ui.horizontal(|ui| {
+                ui.label("set_edge_link");
+                ui.allocate_ui_with_layout(
+                    ui.available_size(),
+                    egui::Layout::right_to_left(egui::Align::Center),
+                    |ui| {
+                        egui::ScrollArea::vertical().show(ui, |ui| {
+                            ui.add_enabled(
+                                app.set_edge,
+                                egui::TextEdit::multiline(&mut app.set_edge_link)
+                                    .hint_text("https://c.tenor.com/L7m_96pUf50AAAAC/tenor.gif"),
+                            )
+                            .enabled();
+                        });
+                    },
+                );
+            });
+
+            ui.separator();
         },
     );
 }

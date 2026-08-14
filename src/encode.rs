@@ -1,7 +1,12 @@
 use crate::hash_convert::hash_conversions::{find_phrases, id_to_string, string_to_id};
 use std::collections::HashMap;
 
-pub fn run(text: &str, hash: &HashMap<usize, String>) -> String {
+pub fn run(
+    text: &str,
+    hash: &HashMap<usize, String>,
+    edge_setting: bool,
+    edge_link: String,
+) -> String {
     let mut ids = Vec::new();
 
     let phrases = find_phrases(text, hash);
@@ -97,6 +102,16 @@ pub fn run(text: &str, hash: &HashMap<usize, String>) -> String {
     }
     // remove final space after final bean
     output.pop();
+
+    if edge_setting {
+        let output_link: String = if edge_link.is_empty() {
+            String::from("https://c.tenor.com/L7m_96pUf50AAAAC/tenor.gif")
+        } else {
+            edge_link
+        };
+        output = format!("[{output}]({output_link})");
+    }
+
     output
 }
 
@@ -111,6 +126,8 @@ mod tests {
         let encoded_result = run(
             "0123456789 aābcčdeēfgģhiījkķlļmnņopqrsštuūvwxyzž!'#$%&\"()*+,-./:;<=>?@[\\]^_`{|}~",
             &get_default_hash(),
+            false,
+            String::new(),
         );
         let mut encoded_beans: Vec<&str> = encoded_result.split(' ').collect();
 
@@ -120,6 +137,28 @@ mod tests {
 
         let correct_result = String::from("beans beanS bean5 bean beaNs beaNS beaN5 beaN beAns beAnS beAn5 beAn beANs beANS beAN5 beAN be4ns be4nS be4n5 be4n be4Ns be4NS be4N5 be4N bEans bEanS bEan5 bEan bEaNs bEaNS bEaN5 bEaN bEAns bEAnS bEAn5 bEAn bEANs bEANS bEAN5 bEAN bE4ns bE4nS bE4n5 bE4n bE4Ns bE4NS bE4N5 bE4N b3ans b3anS b3an5 b3an b3aNs b3aNS b3aN5 b3aN b3Ans b3AnS b3An5 b3An b3ANs b3ANS b3AN5 b3AN b34ns b34nS b34n5 b34n b34Ns b34NS b34N5 b34N Beans BeanS Bean5 Bean BeaNs BeaNS BeaN5 BeaN");
 
+        assert_eq!(encoded_beans.join(" "), correct_result);
+    }
+
+    #[test]
+    fn encoding_edge() {
+        let encoded_result = run(
+            "a",
+            &get_default_hash(),
+            true,
+            String::from("https://c.tenor.com/L7m_96pUf50AAAAC/tenor.gif"),
+        );
+        let mut encoded_beans: Vec<&str> = encoded_result.split(' ').collect();
+
+        let bracket_present: bool = encoded_beans[0].starts_with('[');
+
+        // same as prior
+        encoded_beans.remove(0);
+        encoded_beans.remove(0);
+
+        let correct_result = String::from("beAn](https://c.tenor.com/L7m_96pUf50AAAAC/tenor.gif)");
+
+        assert!(bracket_present);
         assert_eq!(encoded_beans.join(" "), correct_result);
     }
 }

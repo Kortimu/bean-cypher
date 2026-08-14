@@ -37,6 +37,8 @@ pub struct TestApp {
     set_lowoutput: bool,
     set_lang: String,
     set_theme: egui::ThemePreference,
+    set_edge: bool,
+    set_edge_link: String,
 
     #[serde(skip)]
     // TODO: might wanna merge with active_error -> active_result
@@ -62,6 +64,8 @@ impl Default for TestApp {
             set_lowoutput: false,
             set_lang: egui_i18n::get_language(),
             set_theme: egui::ThemePreference::System,
+            set_edge: false,
+            set_edge_link: String::new(),
 
             output_shown: false,
             active_error: None,
