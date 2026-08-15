@@ -34,6 +34,8 @@ error_what = JA TU ŠITO REDZI, KAUT KAS SAGĀJIS RIKTĪGĀ SVIESTĀ
 set_theme = motīvs
 set_lowercase = mazie burtiņi
 set_lang = valoda
+set_edge = e.d.g.e.
+set_edge_link = saitīte
 
 credits_kortimu = nešpetnais ģēnijs aiz šī:
 ## feel free to adjust this bit to what is a valid high level profession that is beans related
